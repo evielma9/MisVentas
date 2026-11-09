@@ -457,7 +457,21 @@
     <!-- PESTAÑA: VENTAS -->
     <section id="tab-sales-history" class="tab-content">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-        <h2 class="text-xl font-bold text-slate-800">Historial de Ventas</h2>
+        <div class="flex justify-between items-center flex-wrap gap-4">
+          <h2 class="text-xl font-bold text-slate-800">Historial de Ventas</h2>
+          <!-- FILTROS DE FECHA INICIO Y FIN -->
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="font-semibold uppercase text-slate-500">Desde:</span>
+              <input type="date" id="sales-start-date" onchange="renderSalesHistory()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-semibold uppercase text-slate-500">Hasta:</span>
+              <input type="date" id="sales-end-date" onchange="renderSalesHistory()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs">
+            </div>
+          </div>
+        </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
@@ -1090,7 +1104,7 @@
       if (tabId === 'finances') initFinancesDates();
       if (tabId === 'categories') renderCategories();
       if (tabId === 'quick-edit') renderQuickEdit();
-      if (tabId === 'sales-history') renderSalesHistory();
+      if (tabId === 'sales-history') initSalesHistoryDates();
       if (tabId === 'shift-cut') initShiftCutDates();
       if (tabId === 'ticket-settings') renderTicketSettings();
       if (tabId === 'users') renderUsers();
@@ -2259,10 +2273,38 @@
       renderQuickEdit();
     }
 
+    function initSalesHistoryDates() {
+      const today = new Date().toISOString().split('T')[0];
+      const startInput = document.getElementById('sales-start-date');
+      const endInput = document.getElementById('sales-end-date');
+      if (startInput && !startInput.value) startInput.value = today;
+      if (endInput && !endInput.value) endInput.value = today;
+      renderSalesHistory();
+    }
+
     function renderSalesHistory() {
+      const startDate = document.getElementById('sales-start-date').value;
+      const endDate = document.getElementById('sales-end-date').value;
+
+      const startDateTime = startDate ? new Date(`${startDate}T00:00:00`) : null;
+      const endDateTime = endDate ? new Date(`${endDate}T23:59:59`) : null;
+
+      const filteredSales = (db.sales || []).filter(s => {
+        const saleDate = new Date(s.date);
+        if (startDateTime && saleDate < startDateTime) return false;
+        if (endDateTime && saleDate > endDateTime) return false;
+        return true;
+      });
+
       const tbody = document.getElementById('sales-history-table-body');
       const canCancel = currentUser.role === 'admin' || currentUser.permissions?.cancelSales;
-      tbody.innerHTML = (db.sales || []).map(s => `
+
+      if (filteredSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">No hay ventas registradas en el rango de fechas seleccionado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredSales.slice().reverse().map(s => `
         <tr class="${s.status === 'cancelled' ? 'bg-rose-50/50 opacity-60' : ''}">
           <td class="p-3 font-mono text-xs font-bold">${s.id}</td>
           <td class="p-3 text-slate-600">${new Date(s.date).toLocaleString()}</td>
