@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MisVentas - Punto de Venta v4.7</title>
+  <title>MisVentas - Punto de Venta v4.8</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -83,7 +83,7 @@
           <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v4.7</span></h1>
+          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v4.8</span></h1>
           <p class="text-xs text-slate-400 mt-0.5">Punto de Venta con Firebase</p>
         </div>
       </div>
@@ -325,15 +325,40 @@
     <!-- PESTAÑA: CORTE DE CAJA -->
     <section id="tab-shift-cut" class="tab-content">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-bold text-slate-800">Corte de Caja (Arqueo de Turno)</h2>
+        <div class="flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Corte de Caja (Arqueo de Turno)</h2>
+            <p class="text-xs text-slate-500">Selecciona el rango de fechas y horas para calcular el corte y notas</p>
+          </div>
           <button onclick="printShiftCutReport()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte de Corte
           </button>
         </div>
+
+        <!-- FILTRO DE FECHAS Y HORAS -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha Inicio</label>
+            <input type="date" id="shift-start-date" onchange="renderShiftCut()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Hora Inicio</label>
+            <input type="time" id="shift-start-time" value="00:00" onchange="renderShiftCut()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha Fin</label>
+            <input type="date" id="shift-end-date" onchange="renderShiftCut()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Hora Fin</label>
+            <input type="time" id="shift-end-time" value="23:59" onchange="renderShiftCut()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+        </div>
+
+        <!-- TARJETAS DE RESUMEN -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <span class="text-xs text-slate-500 uppercase font-semibold">Total Ventas</span>
+            <span class="text-xs text-slate-500 uppercase font-semibold">Total Ventas en Rango</span>
             <p id="shift-total-sales" class="text-2xl font-bold text-slate-800 mt-1">$0.00</p>
           </div>
           <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
@@ -349,6 +374,28 @@
             <p id="shift-credit-sales" class="text-2xl font-bold text-amber-700 mt-1">$0.00</p>
           </div>
         </div>
+
+        <!-- TABLA DE NOTAS EN EL CORTE -->
+        <div class="space-y-3 pt-2">
+          <h3 class="font-bold text-slate-800 text-sm uppercase">Notas / Folios incluidos en el Corte</h3>
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Folio Nota</th>
+                  <th class="p-3">Fecha y Hora</th>
+                  <th class="p-3">Cajero</th>
+                  <th class="p-3">Pago</th>
+                  <th class="p-3 text-right">Importe Sin IVA</th>
+                  <th class="p-3 text-right">IVA Aparte</th>
+                  <th class="p-3 text-right">Total Con IVA</th>
+                </tr>
+              </thead>
+              <tbody id="shift-notes-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -444,7 +491,7 @@
 
   </main>
 
-  <!-- MODAL: PRODUCTO (ALTA Y EDICIÓN) -->
+  <!-- MODAL: PRODUCTO -->
   <div id="product-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -835,7 +882,7 @@
       if (tabId === 'categories') renderCategories();
       if (tabId === 'quick-edit') renderQuickEdit();
       if (tabId === 'sales-history') renderSalesHistory();
-      if (tabId === 'shift-cut') renderShiftCut();
+      if (tabId === 'shift-cut') initShiftCutDates();
       if (tabId === 'ticket-settings') renderTicketSettings();
       if (tabId === 'users') renderUsers();
       if (tabId === 'audit-log') renderAuditLogs();
@@ -1574,7 +1621,7 @@
         ${itemsHtml}
         <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
         ${sale.discount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Descuento Promo:</span><span>-$${sale.discount.toFixed(2)}</span></div>` : ''}
-        <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>$${sale.subtotal.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Importe sin IVA:</span><span>$${sale.taxableBase.toFixed(2)}</span></div>
         <div style="display:flex; justify-content:space-between;"><span>IVA (${sale.taxRate}%):</span><span>$${sale.taxAmount.toFixed(2)}</span></div>
         <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 13px; margin-top: 4px;">
           <span>TOTAL:</span>
@@ -1764,29 +1811,115 @@
       renderSalesHistory();
     }
 
+    function initShiftCutDates() {
+      const today = new Date().toISOString().split('T')[0];
+      const startDateInput = document.getElementById('shift-start-date');
+      const endDateInput = document.getElementById('shift-end-date');
+      if (startDateInput && !startDateInput.value) startDateInput.value = today;
+      if (endDateInput && !endDateInput.value) endDateInput.value = today;
+      renderShiftCut();
+    }
+
+    function getFilteredShiftSales() {
+      const startDate = document.getElementById('shift-start-date').value;
+      const startTime = document.getElementById('shift-start-time').value || '00:00';
+      const endDate = document.getElementById('shift-end-date').value;
+      const endTime = document.getElementById('shift-end-time').value || '23:59';
+
+      const startDateTime = new Date(`${startDate}T${startTime}:00`);
+      const endDateTime = new Date(`${endDate}T${endTime}:59`);
+
+      return (db.sales || []).filter(s => {
+        if (s.status === 'cancelled') return false;
+        const saleDate = new Date(s.date);
+        return saleDate >= startDateTime && saleDate <= endDateTime;
+      });
+    }
+
     function renderShiftCut() {
-      const activeSales = (db.sales || []).filter(s => s.status === 'completed');
-      document.getElementById('shift-total-sales').innerText = `$${activeSales.reduce((a, s) => a + s.total, 0).toFixed(2)}`;
-      document.getElementById('shift-cash-sales').innerText = `$${activeSales.filter(s => s.paymentMethod === 'cash').reduce((a, s) => a + s.total, 0).toFixed(2)}`;
-      document.getElementById('shift-card-sales').innerText = `$${activeSales.filter(s => s.paymentMethod === 'card').reduce((a, s) => a + s.total, 0).toFixed(2)}`;
-      document.getElementById('shift-credit-sales').innerText = `$${activeSales.filter(s => s.paymentMethod === 'credit').reduce((a, s) => a + s.total, 0).toFixed(2)}`;
+      const activeSales = getFilteredShiftSales();
+      
+      const totalSales = activeSales.reduce((a, s) => a + s.total, 0);
+      const cashSales = activeSales.filter(s => s.paymentMethod === 'cash').reduce((a, s) => a + s.total, 0);
+      const cardSales = activeSales.filter(s => s.paymentMethod === 'card').reduce((a, s) => a + s.total, 0);
+      const creditSales = activeSales.filter(s => s.paymentMethod === 'credit').reduce((a, s) => a + s.total, 0);
+
+      document.getElementById('shift-total-sales').innerText = `$${totalSales.toFixed(2)}`;
+      document.getElementById('shift-cash-sales').innerText = `$${cashSales.toFixed(2)}`;
+      document.getElementById('shift-card-sales').innerText = `$${cardSales.toFixed(2)}`;
+      document.getElementById('shift-credit-sales').innerText = `$${creditSales.toFixed(2)}`;
+
+      const tbody = document.getElementById('shift-notes-table-body');
+      if (activeSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No hay notas registradas en el rango de fecha y hora seleccionado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = activeSales.map(s => `
+        <tr>
+          <td class="p-3 font-mono font-bold text-xs">${s.id}</td>
+          <td class="p-3 text-slate-600 text-xs">${new Date(s.date).toLocaleString()}</td>
+          <td class="p-3">${s.user}</td>
+          <td class="p-3 uppercase text-xs font-semibold">${s.paymentMethod}</td>
+          <td class="p-3 text-right">$${(s.taxableBase || (s.total / (1 + (s.taxRate/100)))).toFixed(2)}</td>
+          <td class="p-3 text-right text-slate-500">$${(s.taxAmount || (s.total - (s.total / (1 + (s.taxRate/100))))).toFixed(2)}</td>
+          <td class="p-3 text-right font-bold">$${s.total.toFixed(2)}</td>
+        </tr>
+      `).join('');
     }
 
     function printShiftCutReport() {
-      const activeSales = (db.sales || []).filter(s => s.status === 'completed');
+      const activeSales = getFilteredShiftSales();
       const wrapper = document.getElementById('printable-ticket-wrapper');
       const container = document.getElementById('printable-ticket');
       const s = db.settings;
 
+      const startDate = document.getElementById('shift-start-date').value;
+      const startTime = document.getElementById('shift-start-time').value;
+      const endDate = document.getElementById('shift-end-date').value;
+      const endTime = document.getElementById('shift-end-time').value;
+
+      const totalSales = activeSales.reduce((a, sale) => a + sale.total, 0);
+      const totalWithoutTax = activeSales.reduce((a, sale) => a + (sale.taxableBase || (sale.total / (1 + (sale.taxRate/100)))), 0);
+      const totalTax = activeSales.reduce((a, sale) => a + (sale.taxAmount || (sale.total - (sale.total / (1 + (sale.taxRate/100))))), 0);
+
+      const notesHtml = activeSales.map(sale => {
+        const sub = sale.taxableBase || (sale.total / (1 + (sale.taxRate/100)));
+        const tax = sale.taxAmount || (sale.total - sub);
+        return `
+          <div style="margin-bottom: 4px; border-bottom: 1px dotted #ccc; padding-bottom: 2px;">
+            <div><strong>${sale.id}</strong> - ${new Date(sale.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${sale.paymentMethod})</div>
+            <div style="display:flex; justify-content:space-between; font-size:9px;">
+              <span>Sin IVA: $${sub.toFixed(2)}</span>
+              <span>IVA: $${tax.toFixed(2)}</span>
+              <span>Total: $${sale.total.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
       container.innerHTML = `
-        <div style="text-align:center; font-weight:bold;">CORTE DE CAJA</div>
+        <div style="text-align:center; font-weight:bold; font-size:13px;">REPORTE DE CORTE DE CAJA</div>
         <div style="text-align:center; font-size:10px;">${s.businessName}</div>
         <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
-        <div>Fecha: ${new Date().toLocaleString()}</div>
-        <div>Cajero: ${currentUser.name}</div>
+        <div style="font-size:10px;">Desde: ${startDate} ${startTime}</div>
+        <div style="font-size:10px;">Hasta: ${endDate} ${endTime}</div>
+        <div style="font-size:10px;">Impreso: ${new Date().toLocaleString()}</div>
+        <div style="font-size:10px;">Cajero/Admin: ${currentUser.name}</div>
         <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
-        <div style="display:flex; justify-content:space-between;"><span>Total Ventas:</span><span>$${activeSales.reduce((a, sale) => a + sale.total, 0).toFixed(2)}</span></div>
+        <div style="font-weight:bold; margin-bottom: 4px;">NOTAS / FOLIOS (${activeSales.length}):</div>
+        ${notesHtml || '<div style="text-align:center;">Sin notas en este período</div>'}
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="display:flex; justify-content:space-between;"><span>Total Sin IVA:</span><span>$${totalWithoutTax.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Total IVA:</span><span>$${totalTax.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 12px; margin-top: 4px;">
+          <span>TOTAL GENERAL:</span>
+          <span>$${totalSales.toFixed(2)}</span>
+        </div>
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="text-align:center; font-size:9px;">Fin de reporte de corte</div>
       `;
+
       wrapper.classList.remove('hidden');
       window.print();
       wrapper.classList.add('hidden');
