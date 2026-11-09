@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MisVentas - Punto de Venta v4.8</title>
+  <title>MisVentas - Punto de Venta v5.0</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -28,7 +28,7 @@
         position: absolute !important;
         left: 0 !important;
         top: 0 !important;
-        width: 80mm !important;
+        width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
         background: #fff !important;
@@ -83,12 +83,12 @@
           <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v4.8</span></h1>
+          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v5.0</span></h1>
           <p class="text-xs text-slate-400 mt-0.5">Punto de Venta con Firebase</p>
         </div>
       </div>
 
-      <nav id="main-nav-bar" class="hidden md:flex items-center gap-1"></nav>
+      <nav id="main-nav-bar" class="hidden md:flex items-center gap-1 overflow-x-auto py-1"></nav>
 
       <div class="flex items-center gap-3">
         <div class="text-right text-xs">
@@ -210,7 +210,7 @@
             <h2 class="text-xl font-bold text-slate-800">Catálogo de Productos</h2>
             <p class="text-xs text-slate-500">Administra los artículos e incluye sus imágenes correspondientes</p>
           </div>
-          <button onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <button id="btn-add-product" onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
             <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuevo Artículo
           </button>
         </div>
@@ -231,6 +231,163 @@
             <tbody id="catalog-table-body" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: ENTRADAS DE INVENTARIO -->
+    <section id="tab-inventory-entry" class="tab-content">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-2xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Recepción / Entrada de Inventario</h2>
+          <p class="text-xs text-slate-500">Agrega existencias a productos ya registrados en el catálogo</p>
+        </div>
+        <form onsubmit="saveInventoryEntry(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Seleccionar Producto</label>
+            <select id="inv-product-id" required class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm">
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cantidad a Agregar</label>
+              <input type="number" id="inv-add-qty" required min="1" placeholder="Ej. 50" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo Unitario ($)</label>
+              <input type="number" step="0.01" id="inv-new-cost" placeholder="Opcional (Actualizar costo)" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Notas / Motivo de Entrada</label>
+            <input type="text" id="inv-notes" placeholder="Ej. Compra a proveedor Factura #402" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
+            <i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Registrar Entrada de Stock
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: REGISTRO DE GASTOS -->
+    <section id="tab-expenses" class="tab-content">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Registro de Gastos</h2>
+            <p class="text-xs text-slate-500">Captura de egresos de la empresa y gastos operativos</p>
+          </div>
+          <button onclick="openExpenseModal()" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+            <i data-lucide="minus-circle" class="w-4 h-4"></i> Registrar Nuevo Gasto
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+              <tr>
+                <th class="p-3">Fecha y Hora</th>
+                <th class="p-3">Concepto</th>
+                <th class="p-3">Forma de Pago</th>
+                <th class="p-3">Usuario</th>
+                <th class="p-3 text-right">Importe ($)</th>
+                <th class="p-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="expenses-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: GANANCIAS Y FINANZAS -->
+    <section id="tab-finances" class="tab-content">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Balance de Ganancias y Gastos</h2>
+            <p class="text-xs text-slate-500">Calcula la utilidad neta contrastando ventas reales y gastos en un período</p>
+          </div>
+          <button onclick="printFinancialReport()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte Financiero
+          </button>
+        </div>
+
+        <!-- FILTRO DE FECHAS Y HORAS -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha Inicio</label>
+            <input type="date" id="fin-start-date" onchange="renderFinances()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Hora Inicio</label>
+            <input type="time" id="fin-start-time" value="00:00" onchange="renderFinances()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha Fin</label>
+            <input type="date" id="fin-end-date" onchange="renderFinances()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Hora Fin</label>
+            <input type="time" id="fin-end-time" value="23:59" onchange="renderFinances()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+        </div>
+
+        <!-- TARJETAS DE RESULTADOS FINANCIEROS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+            <span class="text-xs text-emerald-700 uppercase font-semibold">Total Ventas (Sin IVA)</span>
+            <p id="fin-total-sales" class="text-2xl font-bold text-emerald-800 mt-1">$0.00</p>
+          </div>
+          <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+            <span class="text-xs text-amber-700 uppercase font-semibold">Costo de lo Vendido</span>
+            <p id="fin-total-cost" class="text-2xl font-bold text-amber-800 mt-1">$0.00</p>
+          </div>
+          <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
+            <span class="text-xs text-rose-700 uppercase font-semibold">Total Gastos Operativos</span>
+            <p id="fin-total-expenses" class="text-2xl font-bold text-rose-800 mt-1">$0.00</p>
+          </div>
+          <div class="bg-sky-50 p-4 rounded-xl border border-sky-100">
+            <span class="text-xs text-sky-700 uppercase font-semibold">Ganancia Neta</span>
+            <p id="fin-net-profit" class="text-2xl font-bold text-sky-800 mt-1">$0.00</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+          <!-- DETALLE DE VENTAS -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 p-3 border-b border-slate-200 font-bold text-xs uppercase text-slate-700">Ventas del Período</div>
+            <div class="max-h-64 overflow-y-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-500 uppercase">
+                  <tr>
+                    <th class="p-2">Folio</th>
+                    <th class="p-2">Fecha</th>
+                    <th class="p-2 text-right">Venta (s/IVA)</th>
+                    <th class="p-2 text-right">Costo</th>
+                  </tr>
+                </thead>
+                <tbody id="fin-sales-list" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+          </div>
+          <!-- DETALLE DE GASTOS -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 p-3 border-b border-slate-200 font-bold text-xs uppercase text-slate-700">Gastos del Período</div>
+            <div class="max-h-64 overflow-y-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-500 uppercase">
+                  <tr>
+                    <th class="p-2">Fecha</th>
+                    <th class="p-2">Concepto</th>
+                    <th class="p-2">Pago</th>
+                    <th class="p-2 text-right">Importe</th>
+                  </tr>
+                </thead>
+                <tbody id="fin-expenses-list" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -335,7 +492,6 @@
           </button>
         </div>
 
-        <!-- FILTRO DE FECHAS Y HORAS -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha Inicio</label>
@@ -355,7 +511,6 @@
           </div>
         </div>
 
-        <!-- TARJETAS DE RESUMEN -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <span class="text-xs text-slate-500 uppercase font-semibold">Total Ventas en Rango</span>
@@ -375,7 +530,6 @@
           </div>
         </div>
 
-        <!-- TABLA DE NOTAS EN EL CORTE -->
         <div class="space-y-3 pt-2">
           <h3 class="font-bold text-slate-800 text-sm uppercase">Notas / Folios incluidos en el Corte</h3>
           <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -491,6 +645,47 @@
 
   </main>
 
+  <!-- MODAL: GASTOS -->
+  <div id="expense-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 border border-slate-100">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-lg text-slate-800">Registro de Gasto</h3>
+        <button onclick="closeExpenseModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveExpense(event)" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Fecha</label>
+            <input type="date" id="exp-date" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Hora</label>
+            <input type="time" id="exp-time" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Concepto del Gasto</label>
+          <input type="text" id="exp-concept" required placeholder="Ej. Pago de luz, bolsas de plástico..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Importe ($)</label>
+            <input type="number" step="0.01" id="exp-amount" required placeholder="0.00" min="0.01" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Forma de Pago</label>
+            <select id="exp-payment-method" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+              <option value="cash">Efectivo</option>
+              <option value="card">Tarjeta</option>
+              <option value="credit">Crédito / Proveedor</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-2.5 rounded-lg shadow">Guardar Gasto</button>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: PRODUCTO -->
   <div id="product-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
@@ -520,7 +715,7 @@
             <select id="prod-category" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"></select>
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock Inicial / Actual</label>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stock Inicial</label>
             <input type="number" id="prod-stock" required value="10" min="0" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
           </div>
         </div>
@@ -638,6 +833,9 @@
           <div class="grid grid-cols-2 gap-2 text-xs">
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-pos" checked> Punto de Venta (POS)</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-catalog"> Catálogo de Productos</label>
+            <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-inventory-entry"> Entrada de Inventario</label>
+            <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-expenses"> Registro de Gastos</label>
+            <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-finances"> Ganancias y Balance</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-categories"> Catálogo de Categorías</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-quick-edit"> Edición Rápida</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-combos"> Promociones y Combos</label>
@@ -702,7 +900,7 @@
 
   <!-- AREA TICKET REPORTE -->
   <div id="printable-ticket-wrapper" class="hidden">
-    <div id="printable-ticket" class="p-4 font-mono text-xs leading-tight w-[80mm]"></div>
+    <div id="printable-ticket" class="p-4 font-mono text-xs leading-tight w-full max-w-[80mm] mx-auto"></div>
   </div>
 
   <!-- LÓGICA GENERAL Y CONFIGURACIÓN DE FIREBASE -->
@@ -721,7 +919,6 @@
       measurementId: "G-GKRWQK3Z6K"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -738,11 +935,11 @@
       users: [
         { 
           id: '1', username: 'admin', name: 'Administrador Principal', role: 'admin', password: 'admin',
-          permissions: { pos: true, catalog: true, categories: true, quickEdit: true, combos: true, salesHistory: true, cancelSales: true, shiftCut: true, ticketSettings: true, users: true, auditLog: true }
+          permissions: { pos: true, catalog: true, inventoryEntry: true, expenses: true, finances: true, categories: true, quickEdit: true, combos: true, salesHistory: true, cancelSales: true, shiftCut: true, ticketSettings: true, users: true, auditLog: true }
         },
         { 
           id: '2', username: 'cajero', name: 'Cajero General', role: 'cajero', password: '1234',
-          permissions: { pos: true, catalog: false, categories: false, quickEdit: false, combos: false, salesHistory: true, cancelSales: false, shiftCut: true, ticketSettings: false, users: false, auditLog: false }
+          permissions: { pos: true, catalog: false, inventoryEntry: false, expenses: false, finances: false, categories: false, quickEdit: false, combos: false, salesHistory: true, cancelSales: false, shiftCut: true, ticketSettings: false, users: false, auditLog: false }
         }
       ],
       products: [
@@ -752,6 +949,7 @@
         { id: 'p4', code: 'PA02', barcode: '75020002', name: 'Pluma Tinta Negra 0.7mm', category: 'Papelería', cost: 3.50, price: 7.50, stock: 150, image: '' }
       ],
       sales: [],
+      expenses: [],
       auditLogs: [],
       combos: [
         { 
@@ -778,6 +976,9 @@
         if (serverData) {
           db = { ...db, ...serverData };
           if (!db.categories) db.categories = ["Abarrotes", "Papelería"];
+          if (!db.expenses) db.expenses = [];
+          if (!db.sales) db.sales = [];
+          if (!db.products) db.products = [];
           if (currentUser) {
             const activeTab = document.querySelector('.tab-content.active');
             if (activeTab) {
@@ -831,8 +1032,9 @@
 
     function tabKeyToTabId(key) {
       const map = {
-        pos: 'pos', catalog: 'catalog', categories: 'categories', quickEdit: 'quick-edit', combos: 'combos',
-        salesHistory: 'sales-history', shiftCut: 'shift-cut', ticketSettings: 'ticket-settings', users: 'users', auditLog: 'audit-log'
+        pos: 'pos', catalog: 'catalog', inventoryEntry: 'inventory-entry', expenses: 'expenses', finances: 'finances',
+        categories: 'categories', quickEdit: 'quick-edit', combos: 'combos', salesHistory: 'sales-history',
+        shiftCut: 'shift-cut', ticketSettings: 'ticket-settings', users: 'users', auditLog: 'audit-log'
       };
       return map[key] || 'pos';
     }
@@ -843,6 +1045,9 @@
       const menuConfig = [
         { key: 'pos', id: 'pos', label: 'Punto de Venta', icon: 'calculator' },
         { key: 'catalog', id: 'catalog', label: 'Catálogo', icon: 'boxes' },
+        { key: 'inventoryEntry', id: 'inventory-entry', label: 'Entradas Stock', icon: 'arrow-down-to-line' },
+        { key: 'expenses', id: 'expenses', label: 'Gastos', icon: 'minus-circle' },
+        { key: 'finances', id: 'finances', label: 'Ganancias', icon: 'trending-up' },
         { key: 'categories', id: 'categories', label: 'Categorías', icon: 'tag' },
         { key: 'quickEdit', id: 'quick-edit', label: 'Edición Rápida', icon: 'zap' },
         { key: 'combos', id: 'combos', label: 'Promociones', icon: 'package' },
@@ -856,7 +1061,7 @@
       nav.innerHTML = menuConfig
         .filter(m => currentUser.role === 'admin' || p[m.key])
         .map(m => `
-          <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 hover:bg-slate-800 transition">
+          <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-slate-800 transition whitespace-nowrap">
             <i data-lucide="${m.icon}" class="w-4 h-4"></i> ${m.label}
           </button>
         `).join('');
@@ -880,6 +1085,9 @@
 
       if (tabId === 'pos') renderPOS();
       if (tabId === 'catalog') renderCatalog();
+      if (tabId === 'inventory-entry') renderInventoryEntry();
+      if (tabId === 'expenses') renderExpenses();
+      if (tabId === 'finances') initFinancesDates();
       if (tabId === 'categories') renderCategories();
       if (tabId === 'quick-edit') renderQuickEdit();
       if (tabId === 'sales-history') renderSalesHistory();
@@ -969,9 +1177,26 @@
       `).join('');
     }
 
+    // VALIDACIÓN DE STOCK AL AGREGAR COMBOS
     function addComboToCart(comboId) {
       const combo = db.combos.find(c => c.id === comboId);
       if (!combo) return;
+
+      for (let req of combo.items) {
+        const prod = db.products.find(p => p.id === req.productId);
+        const inCartLoose = currentCart.filter(i => !i.isCombo && i.productId === req.productId).reduce((a, b) => a + b.qty, 0);
+        let inCartCombos = 0;
+        currentCart.filter(i => i.isCombo).forEach(cb => {
+          const match = cb.comboItems.find(ci => ci.productId === req.productId);
+          if (match) inCartCombos += (match.qty * cb.qty);
+        });
+
+        const totalNeeded = inCartLoose + inCartCombos + req.qty;
+        if (!prod || prod.stock < totalNeeded) {
+          alert(`No hay stock suficiente para incluir este paquete. El producto "${prod ? prod.name : 'requerido'}" sólo tiene ${prod ? prod.stock : 0} en existencia.`);
+          return;
+        }
+      }
 
       currentCart.push({
         isCombo: true,
@@ -992,9 +1217,22 @@
       renderCart();
     }
 
+    // VALIDACIÓN DE STOCK AL AGREGAR PRODUCTOS INDIVIDUALES
     function addToCart(productId) {
       const prod = db.products.find(p => p.id === productId);
       if (!prod) return;
+
+      const currentQtyInCart = currentCart.filter(i => !i.isCombo && i.productId === productId).reduce((a, b) => a + b.qty, 0);
+      let inCartCombos = 0;
+      currentCart.filter(i => i.isCombo).forEach(cb => {
+        const match = cb.comboItems.find(ci => ci.productId === productId);
+        if (match) inCartCombos += (match.qty * cb.qty);
+      });
+
+      if (prod.stock < (currentQtyInCart + inCartCombos + 1)) {
+        alert(`Stock insuficiente. Solo hay ${prod.stock} unidades de "${prod.name}" en existencia.`);
+        return;
+      }
 
       const item = currentCart.find(i => !i.isCombo && i.productId === productId);
       if (item) { item.qty += 1; } 
@@ -1009,10 +1247,21 @@
     }
 
     function updateCartQty(index, qty) {
-      if (currentCart[index]) {
-        currentCart[index].qty = parseInt(qty) || 1;
-        if (currentCart[index].qty <= 0) currentCart.splice(index, 1);
+      const parsedQty = parseInt(qty) || 1;
+      const item = currentCart[index];
+      if (!item) return;
+
+      if (!item.isCombo) {
+        const prod = db.products.find(p => p.id === item.productId);
+        if (prod && prod.stock < parsedQty) {
+          alert(`No se puede aumentar la cantidad. Stock disponible: ${prod.stock}`);
+          renderCart();
+          return;
+        }
       }
+
+      item.qty = parsedQty;
+      if (item.qty <= 0) currentCart.splice(index, 1);
       renderCart();
     }
 
@@ -1166,6 +1415,254 @@
       grid.innerHTML = html;
     }
 
+    // REGISTRO Y ENTRADAS DE INVENTARIO
+    function renderInventoryEntry() {
+      const select = document.getElementById('inv-product-id');
+      select.innerHTML = db.products.map(p => `<option value="${p.id}">${p.name} (Stock Actual: ${p.stock} | Código: ${p.code})</option>`).join('');
+    }
+
+    function saveInventoryEntry(e) {
+      e.preventDefault();
+      const prodId = document.getElementById('inv-product-id').value;
+      const addQty = parseInt(document.getElementById('inv-add-qty').value) || 0;
+      const newCostInput = document.getElementById('inv-new-cost').value;
+      const notes = document.getElementById('inv-notes').value.trim();
+
+      const p = db.products.find(x => x.id === prodId);
+      if (!p) return;
+
+      const oldStock = p.stock;
+      p.stock += addQty;
+
+      let detailStr = `Entrada de inventario +${addQty}. Stock previo: ${oldStock} -> Nuevo stock: ${p.stock}`;
+
+      if (newCostInput !== '') {
+        const newCost = parseFloat(newCostInput);
+        if (!isNaN(newCost)) {
+          detailStr += ` | Costo actualizado: $${p.cost} -> $${newCost}`;
+          p.cost = newCost;
+        }
+      }
+
+      if (notes) detailStr += ` | Nota: ${notes}`;
+
+      db.auditLogs.push({ date: new Date().toISOString(), user: currentUser.username, product: p.name, detail: detailStr });
+      saveStorage();
+      alert(`Stock de ${p.name} actualizado a ${p.stock} unidades.`);
+      document.getElementById('inv-add-qty').value = '';
+      document.getElementById('inv-new-cost').value = '';
+      document.getElementById('inv-notes').value = '';
+      renderInventoryEntry();
+    }
+
+    // REGISTRO DE GASTOS
+    function renderExpenses() {
+      const tbody = document.getElementById('expenses-table-body');
+      tbody.innerHTML = (db.expenses || []).slice().reverse().map((exp, idx) => `
+        <tr>
+          <td class="p-3 text-xs text-slate-600 font-mono">${new Date(exp.date).toLocaleString()}</td>
+          <td class="p-3 font-medium text-slate-800">${exp.concept}</td>
+          <td class="p-3 text-xs uppercase font-bold">${exp.paymentMethod}</td>
+          <td class="p-3 text-slate-600">${exp.user}</td>
+          <td class="p-3 text-right font-bold text-rose-600">$${exp.amount.toFixed(2)}</td>
+          <td class="p-3 text-center">
+            <button onclick="deleteExpense('${exp.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openExpenseModal() {
+      const today = new Date().toISOString().split('T')[0];
+      const nowTime = new Date().toTimeString().split(' ')[0].slice(0,5);
+      document.getElementById('exp-date').value = today;
+      document.getElementById('exp-time').value = nowTime;
+      document.getElementById('exp-concept').value = '';
+      document.getElementById('exp-amount').value = '';
+      document.getElementById('expense-modal').classList.remove('hidden');
+    }
+
+    function closeExpenseModal() {
+      document.getElementById('expense-modal').classList.add('hidden');
+    }
+
+    function saveExpense(e) {
+      e.preventDefault();
+      const expDate = document.getElementById('exp-date').value;
+      const expTime = document.getElementById('exp-time').value;
+      const concept = document.getElementById('exp-concept').value.trim();
+      const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+      const paymentMethod = document.getElementById('exp-payment-method').value;
+
+      const fullDate = new Date(`${expDate}T${expTime}:00`).toISOString();
+
+      const newExp = {
+        id: 'EXP-' + Date.now().toString().slice(-6),
+        date: fullDate,
+        concept,
+        amount,
+        paymentMethod,
+        user: currentUser.username
+      };
+
+      if (!db.expenses) db.expenses = [];
+      db.expenses.push(newExp);
+      db.auditLogs.push({ date: new Date().toISOString(), user: currentUser.username, product: concept, detail: `Gasto registrado por $${amount.toFixed(2)} (${paymentMethod})` });
+      
+      saveStorage();
+      closeExpenseModal();
+      renderExpenses();
+      alert('Gasto registrado exitosamente');
+    }
+
+    function deleteExpense(expId) {
+      if (!confirm('¿Eliminar este registro de gasto?')) return;
+      db.expenses = db.expenses.filter(e => e.id !== expId);
+      saveStorage();
+      renderExpenses();
+    }
+
+    // BALANCES Y GANANCIAS POR PERÍODO
+    function initFinancesDates() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('fin-start-date').value = today;
+      document.getElementById('fin-end-date').value = today;
+      renderFinances();
+    }
+
+    function getFilteredFinancials() {
+      const startDate = document.getElementById('fin-start-date').value;
+      const startTime = document.getElementById('fin-start-time').value || '00:00';
+      const endDate = document.getElementById('fin-end-date').value;
+      const endTime = document.getElementById('fin-end-time').value || '23:59';
+
+      const startDateTime = new Date(`${startDate}T${startTime}:00`);
+      const endDateTime = new Date(`${endDate}T${endTime}:59`);
+
+      const filteredSales = (db.sales || []).filter(s => {
+        if (s.status === 'cancelled') return false;
+        const saleDate = new Date(s.date);
+        return saleDate >= startDateTime && saleDate <= endDateTime;
+      });
+
+      const filteredExpenses = (db.expenses || []).filter(e => {
+        const expDate = new Date(e.date);
+        return expDate >= startDateTime && expDate <= endDateTime;
+      });
+
+      return { filteredSales, filteredExpenses, startDate, startTime, endDate, endTime };
+    }
+
+    function renderFinances() {
+      const { filteredSales, filteredExpenses } = getFilteredFinancials();
+
+      let totalSalesNoTax = 0;
+      let totalCostOfSales = 0;
+
+      filteredSales.forEach(s => {
+        const sub = s.taxableBase || (s.total / (1 + (s.taxRate / 100)));
+        totalSalesNoTax += sub;
+
+        s.items.forEach(item => {
+          if (item.isCombo && item.comboItems) {
+            item.comboItems.forEach(ci => {
+              const p = db.products.find(x => x.id === ci.productId);
+              if (p) totalCostOfSales += (p.cost * ci.qty * item.qty);
+            });
+          } else {
+            totalCostOfSales += ((item.cost || 0) * item.qty);
+          }
+        });
+      });
+
+      const totalExpenses = filteredExpenses.reduce((a, e) => a + e.amount, 0);
+      const netProfit = (totalSalesNoTax - totalCostOfSales) - totalExpenses;
+
+      document.getElementById('fin-total-sales').innerText = `$${totalSalesNoTax.toFixed(2)}`;
+      document.getElementById('fin-total-cost').innerText = `$${totalCostOfSales.toFixed(2)}`;
+      document.getElementById('fin-total-expenses').innerText = `$${totalExpenses.toFixed(2)}`;
+      
+      const netDisp = document.getElementById('fin-net-profit');
+      netDisp.innerText = `$${netProfit.toFixed(2)}`;
+      if (netProfit < 0) {
+        netDisp.className = "text-2xl font-bold text-rose-600 mt-1";
+      } else {
+        netDisp.className = "text-2xl font-bold text-sky-800 mt-1";
+      }
+
+      document.getElementById('fin-sales-list').innerHTML = filteredSales.map(s => {
+        const sub = s.taxableBase || (s.total / (1 + (s.taxRate / 100)));
+        let saleCost = 0;
+        s.items.forEach(i => saleCost += ((i.cost || 0) * i.qty));
+        return `
+          <tr>
+            <td class="p-2 font-mono font-bold">${s.id}</td>
+            <td class="p-2 text-slate-500">${new Date(s.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+            <td class="p-2 text-right font-medium">$${sub.toFixed(2)}</td>
+            <td class="p-2 text-right text-slate-500">$${saleCost.toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('fin-expenses-list').innerHTML = filteredExpenses.map(e => `
+        <tr>
+          <td class="p-2 text-slate-500">${new Date(e.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td>
+          <td class="p-2 font-medium">${e.concept}</td>
+          <td class="p-2 uppercase text-[10px]">${e.paymentMethod}</td>
+          <td class="p-2 text-right text-rose-600 font-bold">$${e.amount.toFixed(2)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function printFinancialReport() {
+      const { filteredSales, filteredExpenses, startDate, startTime, endDate, endTime } = getFilteredFinancials();
+      const wrapper = document.getElementById('printable-ticket-wrapper');
+      const container = document.getElementById('printable-ticket');
+      const s = db.settings;
+
+      let totalSalesNoTax = 0;
+      let totalCostOfSales = 0;
+
+      filteredSales.forEach(sale => {
+        const sub = sale.taxableBase || (sale.total / (1 + (sale.taxRate / 100)));
+        totalSalesNoTax += sub;
+        sale.items.forEach(item => {
+          totalCostOfSales += ((item.cost || 0) * item.qty);
+        });
+      });
+
+      const totalExpenses = filteredExpenses.reduce((a, e) => a + e.amount, 0);
+      const grossProfit = totalSalesNoTax - totalCostOfSales;
+      const netProfit = grossProfit - totalExpenses;
+
+      container.innerHTML = `
+        <div style="text-align:center; font-weight:bold; font-size:14px;">REPORTE DE GANANCIAS Y GASTOS</div>
+        <div style="text-align:center; font-size:10px;">${s.businessName}</div>
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="font-size:10px;">Desde: ${startDate} ${startTime}</div>
+        <div style="font-size:10px;">Hasta: ${endDate} ${endTime}</div>
+        <div style="font-size:10px;">Impreso: ${new Date().toLocaleString()}</div>
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="display:flex; justify-content:space-between;"><span>Ventas Totales (Sin IVA):</span><span>$${totalSalesNoTax.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>(-) Costo de Productos:</span><span>-$${totalCostOfSales.toFixed(2)}</span></div>
+        <div style="border-bottom: 1px dotted #ccc; margin: 4px 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>(=) Utilidad Bruta:</span><span>$${grossProfit.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>(-) Gastos Operativos:</span><span>-$${totalExpenses.toFixed(2)}</span></div>
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 13px;">
+          <span>GANANCIA NETA:</span>
+          <span>$${netProfit.toFixed(2)}</span>
+        </div>
+        <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+        <div style="text-align:center; font-size:9px;">Reporte Generado por MisVentas POS</div>
+      `;
+
+      wrapper.classList.remove('hidden');
+      window.print();
+      wrapper.classList.add('hidden');
+    }
+
     // GESTIÓN DE CATEGORÍAS
     function renderCategories() {
       const tbody = document.getElementById('categories-table-body');
@@ -1193,31 +1690,22 @@
       document.getElementById('category-modal').classList.remove('hidden');
     }
 
-    function closeCategoryModal() {
-      document.getElementById('category-modal').classList.add('hidden');
-    }
+    function closeCategoryModal() { document.getElementById('category-modal').classList.add('hidden'); }
 
     function saveCategory(e) {
       e.preventDefault();
       const editIdx = document.getElementById('category-edit-id').value;
       const catName = document.getElementById('category-name').value.trim();
-
       if (!db.categories) db.categories = [];
 
       if (editIdx !== '') {
         const oldCat = db.categories[editIdx];
         db.categories[editIdx] = catName;
-        db.products.forEach(p => {
-          if (p.category === oldCat) p.category = catName;
-        });
+        db.products.forEach(p => { if (p.category === oldCat) p.category = catName; });
       } else {
-        if (db.categories.includes(catName)) {
-          alert('Esta categoría ya existe.');
-          return;
-        }
+        if (db.categories.includes(catName)) { alert('Esta categoría ya existe.'); return; }
         db.categories.push(catName);
       }
-
       saveStorage();
       closeCategoryModal();
       renderCategories();
@@ -1228,9 +1716,7 @@
       const countProds = db.products.filter(p => p.category === catToDelete).length;
       if (countProds > 0) {
         if (!confirm(`La categoría "${catToDelete}" tiene ${countProds} producto(s) asignado(s). Si la eliminas, sus productos quedarán bajo "Sin Categoría". ¿Deseas continuar?`)) return;
-        db.products.forEach(p => {
-          if (p.category === catToDelete) p.category = 'Sin Categoría';
-        });
+        db.products.forEach(p => { if (p.category === catToDelete) p.category = 'Sin Categoría'; });
         if (!db.categories.includes('Sin Categoría')) db.categories.push('Sin Categoría');
       } else {
         if (!confirm('¿Eliminar esta categoría?')) return;
@@ -1291,9 +1777,7 @@
       document.getElementById('combo-modal').classList.remove('hidden');
     }
 
-    function closeComboModal() {
-      document.getElementById('combo-modal').classList.add('hidden');
-    }
+    function closeComboModal() { document.getElementById('combo-modal').classList.add('hidden'); }
 
     function addComboItemRow() {
       comboFormItems.push({ productId: db.products[0]?.id || '', qty: 1 });
@@ -1332,20 +1816,10 @@
       if (editId) {
         const combo = db.combos.find(c => c.id === editId);
         if (combo) {
-          combo.name = name;
-          combo.price = price;
-          combo.image = image;
-          combo.items = [...comboFormItems];
+          combo.name = name; combo.price = price; combo.image = image; combo.items = [...comboFormItems];
         }
       } else {
-        const newCombo = {
-          id: 'c' + Date.now(),
-          name: name,
-          price: price,
-          image: image,
-          items: [...comboFormItems]
-        };
-        db.combos.push(newCombo);
+        db.combos.push({ id: 'c' + Date.now(), name, price, image, items: [...comboFormItems] });
       }
 
       saveStorage();
@@ -1417,6 +1891,9 @@
           const p = u.permissions || {};
           document.getElementById('perm-pos').checked = !!p.pos;
           document.getElementById('perm-catalog').checked = !!p.catalog;
+          document.getElementById('perm-inventory-entry').checked = !!p.inventoryEntry;
+          document.getElementById('perm-expenses').checked = !!p.expenses;
+          document.getElementById('perm-finances').checked = !!p.finances;
           document.getElementById('perm-categories').checked = !!p.categories;
           document.getElementById('perm-quick-edit').checked = !!p.quickEdit;
           document.getElementById('perm-combos').checked = !!p.combos;
@@ -1436,9 +1913,7 @@
       document.getElementById('user-modal').classList.remove('hidden');
     }
 
-    function closeUserModal() {
-      document.getElementById('user-modal').classList.add('hidden');
-    }
+    function closeUserModal() { document.getElementById('user-modal').classList.add('hidden'); }
 
     function toggleRolePermissions(role) {
       if (role === 'admin') {
@@ -1457,6 +1932,9 @@
       const perms = {
         pos: document.getElementById('perm-pos').checked,
         catalog: document.getElementById('perm-catalog').checked,
+        inventoryEntry: document.getElementById('perm-inventory-entry').checked,
+        expenses: document.getElementById('perm-expenses').checked,
+        finances: document.getElementById('perm-finances').checked,
         categories: document.getElementById('perm-categories').checked,
         quickEdit: document.getElementById('perm-quick-edit').checked,
         combos: document.getElementById('perm-combos').checked,
@@ -1509,9 +1987,7 @@
       setPaymentMethod('cash');
     }
 
-    function closeCheckoutModal() {
-      document.getElementById('checkout-modal').classList.add('hidden');
-    }
+    function closeCheckoutModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
 
     function setPaymentMethod(method) {
       currentPaymentMethod = method;
@@ -1560,28 +2036,6 @@
         } else {
           const p = db.products.find(x => x.id === item.productId);
           if (p) p.stock = Math.max(0, p.stock - item.qty);
-        }
-      });
-
-      let tempLooseItems = JSON.parse(JSON.stringify(currentCart.filter(i => !i.isCombo)));
-      (db.combos || []).forEach(combo => {
-        let applying = true;
-        while(applying) {
-          let valid = true;
-          for(let req of combo.items) {
-            let found = tempLooseItems.find(i => i.productId === req.productId);
-            if(!found || found.qty < req.qty) { valid = false; break; }
-          }
-          if(valid) {
-            combo.items.forEach(req => {
-              let found = tempLooseItems.find(i => i.productId === req.productId);
-              found.qty -= req.qty;
-              const p = db.products.find(x => x.id === req.productId);
-              if (p) p.stock = Math.max(0, p.stock - req.qty);
-            });
-          } else {
-            applying = false;
-          }
         }
       });
 
@@ -1639,6 +2093,11 @@
 
     function renderCatalog() {
       const tbody = document.getElementById('catalog-table-body');
+      const canEdit = currentUser.role === 'admin' || currentUser.permissions?.catalog;
+      
+      const btnAdd = document.getElementById('btn-add-product');
+      if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';
+
       tbody.innerHTML = db.products.map(p => `
         <tr>
           <td class="p-3">
@@ -1651,8 +2110,10 @@
           <td class="p-3 text-right font-bold text-slate-800">$${p.price.toFixed(2)}</td>
           <td class="p-3 text-center font-bold">${p.stock}</td>
           <td class="p-3 text-center flex justify-center gap-2">
-            <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
-            <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            ${canEdit ? `
+              <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
+              <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            ` : '-'}
           </td>
         </tr>
       `).join('');
@@ -1660,6 +2121,11 @@
     }
 
     function openProductModal(productId = null) {
+      if (currentUser.role !== 'admin' && !currentUser.permissions?.catalog) {
+        alert('No tienes privilegio para dar de alta o modificar productos.');
+        return;
+      }
+
       const select = document.getElementById('prod-category');
       select.innerHTML = (db.categories || []).map(c => `<option value="${c}">${c}</option>`).join('');
       
@@ -1694,6 +2160,7 @@
     }
 
     function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+    
     function calculateModalMargin() {
       const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
       const price = parseFloat(document.getElementById('prod-price').value) || 0;
@@ -1718,14 +2185,8 @@
       if (editId) {
         const p = db.products.find(x => x.id === editId);
         if (p) {
-          p.code = code;
-          p.barcode = barcode;
-          p.name = name;
-          p.category = category;
-          p.stock = stock;
-          p.cost = cost;
-          p.price = price;
-          p.image = image;
+          p.code = code; p.barcode = barcode; p.name = name; p.category = category;
+          p.stock = stock; p.cost = cost; p.price = price; p.image = image;
           db.auditLogs.push({ date: new Date().toISOString(), user: currentUser.username, product: p.name, detail: `Edición de producto.` });
         }
       } else {
@@ -1852,7 +2313,7 @@
 
       const tbody = document.getElementById('shift-notes-table-body');
       if (activeSales.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No hay notas registradas en el rango de fecha y hora seleccionado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">No hay notas registradas en el rango seleccionado.</td></tr>`;
         return;
       }
 
