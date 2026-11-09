@@ -1177,7 +1177,6 @@
       `).join('');
     }
 
-    // VALIDACIÓN DE STOCK AL AGREGAR COMBOS
     function addComboToCart(comboId) {
       const combo = db.combos.find(c => c.id === comboId);
       if (!combo) return;
@@ -1217,7 +1216,6 @@
       renderCart();
     }
 
-    // VALIDACIÓN DE STOCK AL AGREGAR PRODUCTOS INDIVIDUALES
     function addToCart(productId) {
       const prod = db.products.find(p => p.id === productId);
       if (!prod) return;
@@ -1415,7 +1413,6 @@
       grid.innerHTML = html;
     }
 
-    // REGISTRO Y ENTRADAS DE INVENTARIO
     function renderInventoryEntry() {
       const select = document.getElementById('inv-product-id');
       select.innerHTML = db.products.map(p => `<option value="${p.id}">${p.name} (Stock Actual: ${p.stock} | Código: ${p.code})</option>`).join('');
@@ -1455,7 +1452,6 @@
       renderInventoryEntry();
     }
 
-    // REGISTRO DE GASTOS
     function renderExpenses() {
       const tbody = document.getElementById('expenses-table-body');
       tbody.innerHTML = (db.expenses || []).slice().reverse().map((exp, idx) => `
@@ -1523,7 +1519,6 @@
       renderExpenses();
     }
 
-    // BALANCES Y GANANCIAS POR PERÍODO
     function initFinancesDates() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('fin-start-date').value = today;
@@ -1663,7 +1658,6 @@
       wrapper.classList.add('hidden');
     }
 
-    // GESTIÓN DE CATEGORÍAS
     function renderCategories() {
       const tbody = document.getElementById('categories-table-body');
       tbody.innerHTML = (db.categories || []).map((cat, idx) => `
@@ -2091,6 +2085,16 @@
       wrapper.classList.add('hidden');
     }
 
+    // NUEVA FUNCIÓN: REIMPRIMIR TICKET DESDE EL HISTORIAL
+    function reprintTicket(saleId) {
+      const sale = db.sales.find(x => x.id === saleId);
+      if (!sale) {
+        alert('No se encontró la venta especificada.');
+        return;
+      }
+      printTicket(sale);
+    }
+
     function renderCatalog() {
       const tbody = document.getElementById('catalog-table-body');
       const canEdit = currentUser.role === 'admin' || currentUser.permissions?.catalog;
@@ -2247,9 +2251,13 @@
           <td class="p-3 text-right text-slate-500">$${s.taxAmount.toFixed(2)} <span class="text-[10px] bg-slate-100 px-1 rounded">(${s.taxRate}%)</span></td>
           <td class="p-3 text-right font-bold">$${s.total.toFixed(2)}</td>
           <td class="p-3 text-center"><span class="px-2 py-0.5 text-[10px] rounded-full font-bold uppercase ${s.status === 'cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${s.status === 'cancelled' ? 'Cancelada' : 'Completada'}</span></td>
-          <td class="p-3 text-center">${s.status !== 'cancelled' && canCancel ? `<button onclick="cancelSale('${s.id}')" class="text-rose-600 text-xs font-medium underline">Cancelar</button>` : '-'}</td>
+          <td class="p-3 text-center flex justify-center items-center gap-3">
+            <button onclick="reprintTicket('${s.id}')" title="Reimprimir Ticket" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 text-xs font-medium"><i data-lucide="printer" class="w-4 h-4"></i> Reimprimir</button>
+            ${s.status !== 'cancelled' && canCancel ? `<button onclick="cancelSale('${s.id}')" class="text-rose-600 text-xs font-medium underline">Cancelar</button>` : ''}
+          </td>
         </tr>
       `).join('');
+      lucide.createIcons();
     }
 
     function cancelSale(saleId) {
