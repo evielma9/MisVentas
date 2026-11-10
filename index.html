@@ -77,8 +77,8 @@
 
   <!-- CABECERA RESPONSIVA -->
   <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40 no-print">
-    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-      <div class="flex items-center gap-3">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16 gap-2">
+      <div class="flex items-center gap-3 shrink-0">
         <!-- BOTÓN HAMBURGUESA PARA MÓVILES -->
         <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition">
           <i data-lucide="menu" class="w-6 h-6"></i>
@@ -94,9 +94,9 @@
       </div>
 
       <!-- NAVEGACIÓN ESCRITORIO -->
-      <nav id="main-nav-bar" class="hidden lg:flex items-center gap-1 flex-wrap justify-center py-1 max-w-3xl"></nav>
+      <nav id="main-nav-bar" class="hidden lg:flex items-center justify-between flex-1 mx-4 gap-2"></nav>
 
-      <div class="flex items-center gap-2 sm:gap-3">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
         <div class="text-right text-xs">
           <span id="current-user-name" class="font-semibold block text-slate-200 max-w-[100px] sm:max-w-none truncate">Invitado</span>
           <span id="current-user-role" class="text-sky-400 font-mono text-[10px] uppercase block">Sin Rol</span>
@@ -172,7 +172,7 @@
                   <tr class="text-left text-xs text-slate-400 border-b border-slate-100">
                     <th class="pb-2">Producto / Paquete</th>
                     <th class="pb-2 text-center">Cant.</th>
-                    <th class="pb-2 text-right">Precio</th>
+                    <th class="pb-2 text-right">Precio c/IVA</th>
                     <th class="pb-2 text-right">Total</th>
                     <th class="pb-2"></th>
                   </tr>
@@ -186,8 +186,8 @@
             </div>
 
             <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 space-y-2">
-              <div class="flex justify-between items-center text-xs sm:text-sm">
-                <span class="text-slate-500">Subtotal:</span>
+              <div class="flex justify-between items-center text-xs sm:text-sm text-slate-600">
+                <span>Subtotal (Sin IVA):</span>
                 <span id="cart-subtotal" class="font-medium">$0.00</span>
               </div>
               <div id="cart-discount-row" class="hidden flex justify-between items-center text-xs sm:text-sm text-amber-600 font-bold bg-amber-50 p-2 rounded-lg border border-amber-200">
@@ -195,11 +195,11 @@
                 <span id="cart-discount">-$0.00</span>
               </div>
               <div class="flex justify-between items-center text-xs sm:text-sm text-slate-600">
-                <span id="cart-tax-label">IVA (16%):</span>
+                <span id="cart-tax-label">Monto IVA (16%):</span>
                 <span id="cart-tax" class="font-medium">$0.00</span>
               </div>
               <div class="flex justify-between items-center text-xl sm:text-2xl font-bold text-slate-900 border-t border-slate-200 pt-2">
-                <span>Total:</span>
+                <span>Total Final (Con IVA):</span>
                 <span id="cart-total" class="text-sky-600">$0.00</span>
               </div>
 
@@ -225,17 +225,26 @@
             <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuevo Artículo
           </button>
         </div>
+
+        <!-- BUSCADOR EN CATÁLOGO DE PRODUCTOS -->
+        <div class="relative max-w-md">
+          <input type="text" id="catalog-search-input" oninput="renderCatalog()" placeholder="Buscar por código, nombre o categoría..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 text-xs sm:text-sm">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+        </div>
+
         <div class="overflow-x-auto -mx-4 sm:mx-0">
           <div class="inline-block min-w-full align-middle px-4 sm:px-0">
             <table class="min-w-full text-left text-xs sm:text-sm">
               <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                 <tr>
                   <th class="p-3">Foto</th>
-                  <th class="p-3">Código</th>
+                  <th class="p-3">Código / Barras</th>
                   <th class="p-3">Nombre</th>
                   <th class="p-3">Categoría</th>
                   <th class="p-3 text-right">Costo</th>
-                  <th class="p-3 text-right">Precio</th>
+                  <th class="p-3 text-right">Precio (s/IVA)</th>
+                  <th class="p-3 text-right">IVA ($)</th>
+                  <th class="p-3 text-right font-bold text-sky-700">Precio (c/IVA)</th>
                   <th class="p-3 text-center">Stock</th>
                   <th class="p-3 text-center">Acciones</th>
                 </tr>
@@ -435,16 +444,30 @@
     <!-- PESTAÑA: EDICIÓN RÁPIDA -->
     <section id="tab-quick-edit" class="tab-content">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4">
-        <h2 class="text-lg sm:text-xl font-bold text-slate-800">Edición Rápida de Inventario y Precios</h2>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Edición Rápida de Inventario y Precios</h2>
+            <p class="text-xs text-slate-500">Modifica rápidamente existencias, costo y precio final con IVA</p>
+          </div>
+        </div>
+
+        <!-- BUSCADOR EN EDICIÓN RÁPIDA -->
+        <div class="relative max-w-md">
+          <input type="text" id="quick-edit-search-input" oninput="renderQuickEdit()" placeholder="Buscar por código, nombre o categoría..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-500 text-xs sm:text-sm">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+        </div>
+
         <div class="overflow-x-auto -mx-4 sm:mx-0">
           <div class="inline-block min-w-full align-middle px-4 sm:px-0">
             <table class="min-w-full text-left text-xs sm:text-sm">
               <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                 <tr>
                   <th class="p-3">Artículo</th>
+                  <th class="p-3">Categoría</th>
                   <th class="p-3 text-center">Stock Actual</th>
                   <th class="p-3 text-right">Costo ($)</th>
-                  <th class="p-3 text-right">Precio ($)</th>
+                  <th class="p-3 text-right">Precio Sin IVA ($)</th>
+                  <th class="p-3 text-right font-bold text-sky-700">Precio Con IVA ($)</th>
                   <th class="p-3 text-center">Acción</th>
                 </tr>
               </thead>
@@ -760,18 +783,28 @@
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">URL de la Imagen / Foto</label>
           <input type="text" id="prod-image" placeholder="https://ejemplo.com/imagen.jpg" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
         </div>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Costo ($)</label>
-            <input type="number" step="0.01" id="prod-cost" required oninput="calculateModalMargin()" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+            <input type="number" step="0.01" id="prod-cost" required oninput="calculateModalMargin('cost')" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio ($)</label>
-            <input type="number" step="0.01" id="prod-price" required oninput="calculateModalMargin()" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio Sin IVA ($)</label>
+            <input type="number" step="0.01" id="prod-price" required oninput="calculateModalMargin('price')" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Margen</label>
-            <div id="prod-margin-display" class="px-2 sm:px-3 py-2 bg-emerald-50 text-emerald-700 font-bold text-xs sm:text-sm rounded-lg border border-emerald-200 text-center truncate">0%</div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1 font-bold text-sky-700">Precio Con IVA ($)</label>
+            <input type="number" step="0.01" id="prod-price-with-tax" required oninput="calculateModalMargin('priceWithTax')" placeholder="0.00" class="w-full px-3 py-2 rounded-lg border border-sky-400 bg-sky-50/50 font-bold text-sm">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+          <div>
+            <span class="text-slate-500 font-semibold block uppercase">Monto de IVA:</span>
+            <span id="prod-tax-amount-display" class="font-bold text-slate-700">$0.00</span>
+          </div>
+          <div>
+            <span class="text-slate-500 font-semibold block uppercase">Margen Est.:</span>
+            <span id="prod-margin-display" class="font-bold text-emerald-600">0%</span>
           </div>
         </div>
         <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg shadow">Guardar Producto</button>
@@ -811,7 +844,7 @@
           <input type="text" id="combo-name" required placeholder="Ej. Paquete Super Súper" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio Especial Promocional ($)</label>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Precio Especial Promocional (Con IVA) ($)</label>
           <input type="number" step="0.01" id="combo-price" required placeholder="250.00" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
         </div>
         <div>
@@ -977,10 +1010,10 @@
         }
       ],
       products: [
-        { id: 'p1', code: 'AB01', barcode: '75010001', name: 'Leche Entera 1L', category: 'Abarrotes', cost: 18.00, price: 24.00, stock: 45, image: '' },
-        { id: 'p2', code: 'AB02', barcode: '75010002', name: 'Pan de Barra 680g', category: 'Abarrotes', cost: 32.00, price: 42.00, stock: 20, image: '' },
-        { id: 'p3', code: 'PA01', barcode: '75020001', name: 'Cuaderno Profesional C/M 100H', category: 'Papelería', cost: 15.00, price: 28.00, stock: 100, image: '' },
-        { id: 'p4', code: 'PA02', barcode: '75020002', name: 'Pluma Tinta Negra 0.7mm', category: 'Papelería', cost: 3.50, price: 7.50, stock: 150, image: '' }
+        { id: 'p1', code: 'AB01', barcode: '75010001', name: 'Leche Entera 1L', category: 'Abarrotes', cost: 18.00, price: 20.69, stock: 45, image: '' },
+        { id: 'p2', code: 'AB02', barcode: '75010002', name: 'Pan de Barra 680g', category: 'Abarrotes', cost: 32.00, price: 36.21, stock: 20, image: '' },
+        { id: 'p3', code: 'PA01', barcode: '75020001', name: 'Cuaderno Profesional C/M 100H', category: 'Papelería', cost: 15.00, price: 24.14, stock: 100, image: '' },
+        { id: 'p4', code: 'PA02', barcode: '75020002', name: 'Pluma Tinta Negra 0.7mm', category: 'Papelería', cost: 3.50, price: 6.47, stock: 150, image: '' }
       ],
       sales: [],
       expenses: [],
@@ -1003,6 +1036,10 @@
     let currentCart = [];
     let currentPaymentMethod = 'cash';
     let posMode = 'scanner';
+
+    function getTaxRateMultiplier() {
+      return 1 + ((db.settings.taxRate || 0) / 100);
+    }
 
     function initStorage() {
       database.ref('misventas_db').on('value', (snapshot) => {
@@ -1051,8 +1088,8 @@
         document.getElementById('current-user-role').innerText = currentUser.role;
 
         renderDynamicNavbar();
-        const firstTab = Object.keys(currentUser.permissions).find(k => currentUser.permissions[k] === true) || 'pos';
-        switchTab(tabKeyToTabId(firstTab));
+        // Redirección fija por defecto al POS para cualquier usuario
+        switchTab('pos');
       } else {
         alert('Credenciales incorrectas');
       }
@@ -1082,29 +1119,39 @@
       const nav = document.getElementById('main-nav-bar');
       const mobileNav = document.getElementById('mobile-nav-bar');
       const p = currentUser.permissions || {};
+      
       const menuConfig = [
-        { key: 'pos', id: 'pos', label: 'POS', icon: 'calculator' },
-        { key: 'catalog', id: 'catalog', label: 'Catálogo', icon: 'boxes' },
-        { key: 'inventoryEntry', id: 'inventory-entry', label: 'Entradas', icon: 'arrow-down-to-line' },
-        { key: 'expenses', id: 'expenses', label: 'Gastos', icon: 'minus-circle' },
-        { key: 'finances', id: 'finances', label: 'Ganancias', icon: 'trending-up' },
-        { key: 'categories', id: 'categories', label: 'Categorías', icon: 'tag' },
-        { key: 'quickEdit', id: 'quick-edit', label: 'Edición', icon: 'zap' },
-        { key: 'combos', id: 'combos', label: 'Promos', icon: 'package' },
-        { key: 'salesHistory', id: 'sales-history', label: 'Ventas', icon: 'history' },
-        { key: 'shiftCut', id: 'shift-cut', label: 'Corte', icon: 'receipt' },
-        { key: 'ticketSettings', id: 'ticket-settings', label: 'Ticket', icon: 'file-badge' },
-        { key: 'users', id: 'users', label: 'Usuarios', icon: 'users' },
-        { key: 'auditLog', id: 'audit-log', label: 'Bitácora', icon: 'file-text' }
+        { key: 'pos', id: 'pos', label: 'POS', icon: 'calculator', group: 'left' },
+        { key: 'catalog', id: 'catalog', label: 'Catálogo', icon: 'boxes', group: 'left' },
+        { key: 'categories', id: 'categories', label: 'Categorías', icon: 'tag', group: 'left' },
+        { key: 'inventoryEntry', id: 'inventory-entry', label: 'Entrada de Inventario', icon: 'arrow-down-to-line', group: 'left' },
+        { key: 'ticketSettings', id: 'ticket-settings', label: 'Ticket', icon: 'file-badge', group: 'left' },
+        { key: 'quickEdit', id: 'quick-edit', label: 'Edición', icon: 'zap', group: 'left' },
+        { key: 'users', id: 'users', label: 'Usuarios', icon: 'users', group: 'left' },
+        
+        { key: 'expenses', id: 'expenses', label: 'Gastos', icon: 'minus-circle', group: 'right' },
+        { key: 'finances', id: 'finances', label: 'Ganancias', icon: 'trending-up', group: 'right' },
+        { key: 'combos', id: 'combos', label: 'Promos', icon: 'package', group: 'right' },
+        { key: 'salesHistory', id: 'sales-history', label: 'Ventas', icon: 'history', group: 'right' },
+        { key: 'shiftCut', id: 'shift-cut', label: 'Corte', icon: 'receipt', group: 'right' },
+        { key: 'auditLog', id: 'audit-log', label: 'Bitácora', icon: 'file-text', group: 'right' }
       ];
 
       const filteredMenu = menuConfig.filter(m => currentUser.role === 'admin' || p[m.key]);
 
-      nav.innerHTML = filteredMenu.map(m => `
-        <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1 hover:bg-slate-800 transition">
+      const leftItems = filteredMenu.filter(m => m.group === 'left');
+      const rightItems = filteredMenu.filter(m => m.group === 'right');
+
+      const renderGroup = (items) => items.map(m => `
+        <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1 hover:bg-slate-800 transition whitespace-nowrap">
           <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i> ${m.label}
         </button>
       `).join('');
+
+      nav.innerHTML = `
+        <div class="flex items-center gap-1 flex-wrap">${renderGroup(leftItems)}</div>
+        <div class="flex items-center gap-1 flex-wrap justify-end">${renderGroup(rightItems)}</div>
+      `;
 
       mobileNav.innerHTML = filteredMenu.map(m => `
         <button onclick="switchTab('${m.id}'); toggleMobileMenu();" id="mobile-tab-btn-${m.id}" class="mobile-nav-btn w-full p-2 rounded-lg text-xs font-medium flex items-center gap-2 bg-slate-700/50 hover:bg-slate-700 text-slate-200 transition">
@@ -1170,6 +1217,7 @@
         const suggestions = document.getElementById('pos-suggestions');
         if (!val) { suggestions.classList.add('hidden'); return; }
 
+        const mult = getTaxRateMultiplier();
         const prodMatches = db.products.filter(p => p.code.toLowerCase().includes(val) || p.barcode.toLowerCase().includes(val) || p.name.toLowerCase().includes(val));
         const comboMatches = (db.combos || []).filter(c => c.name.toLowerCase().includes(val));
 
@@ -1190,6 +1238,7 @@
         });
 
         prodMatches.forEach(p => {
+          const priceWithTax = p.price * mult;
           html += `
             <div onclick="addToCart('${p.id}')" class="p-3 hover:bg-slate-50 cursor-pointer flex justify-between items-center">
               <div class="flex items-center gap-2">
@@ -1199,7 +1248,7 @@
                   <p class="text-xs text-slate-400">Cód: ${p.code} | Stock: ${p.stock}</p>
                 </div>
               </div>
-              <span class="font-bold text-sky-600">$${p.price.toFixed(2)}</span>
+              <span class="font-bold text-sky-600">$${priceWithTax.toFixed(2)} <span class="text-[10px] text-slate-400 font-normal">(c/IVA)</span></span>
             </div>
           `;
         });
@@ -1252,7 +1301,7 @@
         isCombo: true,
         comboId: combo.id,
         name: `🎁 [PAQUETE] ${combo.name}`,
-        price: combo.price,
+        priceWithTax: combo.price,
         cost: 0,
         qty: 1,
         image: combo.image || '',
@@ -1283,9 +1332,11 @@
         return;
       }
 
+      const priceWithTax = prod.price * getTaxRateMultiplier();
+
       const item = currentCart.find(i => !i.isCombo && i.productId === productId);
       if (item) { item.qty += 1; } 
-      else { currentCart.push({ isCombo: false, productId: prod.id, name: prod.name, price: prod.price, cost: prod.cost, image: prod.image || '', qty: 1 }); }
+      else { currentCart.push({ isCombo: false, productId: prod.id, name: prod.name, priceWithoutTax: prod.price, priceWithTax: priceWithTax, cost: prod.cost, image: prod.image || '', qty: 1 }); }
 
       const input = document.getElementById('pos-barcode-input');
       if (input) input.value = '';
@@ -1325,8 +1376,9 @@
     }
 
     function calculateCartTotals() {
-      let subtotal = currentCart.reduce((acc, i) => acc + (i.price * i.qty), 0);
-      let totalDiscount = 0;
+      const mult = getTaxRateMultiplier();
+      let totalWithTax = currentCart.reduce((acc, i) => acc + (i.priceWithTax * i.qty), 0);
+      let totalDiscountWithTax = 0;
 
       let tempLooseItems = JSON.parse(JSON.stringify(currentCart.filter(i => !i.isCombo)));
 
@@ -1342,11 +1394,11 @@
             let normalSum = 0;
             combo.items.forEach(req => {
               let found = tempLooseItems.find(i => i.productId === req.productId);
-              normalSum += found.price * req.qty;
+              normalSum += (found.priceWithTax * req.qty);
               found.qty -= req.qty;
             });
             if(normalSum > combo.price) {
-              totalDiscount += (normalSum - combo.price);
+              totalDiscountWithTax += (normalSum - combo.price);
             }
           } else {
             applying = false;
@@ -1354,12 +1406,11 @@
         }
       });
 
-      let taxableBase = Math.max(0, subtotal - totalDiscount);
-      let taxRate = (db.settings.taxRate || 0) / 100;
-      let taxAmount = taxableBase * taxRate;
-      let finalTotal = taxableBase + taxAmount;
+      let finalTotal = Math.max(0, totalWithTax - totalDiscountWithTax);
+      let taxableBase = finalTotal / mult;
+      let taxAmount = finalTotal - taxableBase;
 
-      return { subtotal, totalDiscount, taxableBase, taxAmount, finalTotal };
+      return { totalWithTax, totalDiscountWithTax, taxableBase, taxAmount, finalTotal };
     }
 
     function renderCart() {
@@ -1384,7 +1435,7 @@
       let totals = calculateCartTotals();
 
       tbody.innerHTML = currentCart.map((item, idx) => {
-        const itemTotal = item.price * item.qty;
+        const itemTotal = item.priceWithTax * item.qty;
         const isPromoLine = item.isCombo;
         return `
           <tr class="${isPromoLine ? 'bg-amber-50/70 border-l-4 border-l-amber-500' : ''}">
@@ -1400,7 +1451,7 @@
             <td class="py-2.5 text-center">
               <input type="number" min="1" value="${item.qty}" onchange="updateCartQty(${idx}, this.value)" class="w-10 sm:w-12 text-center border border-slate-200 rounded py-0.5 text-xs sm:text-sm">
             </td>
-            <td class="py-2.5 text-right text-slate-600 text-xs sm:text-sm">$${item.price.toFixed(2)}</td>
+            <td class="py-2.5 text-right font-semibold text-slate-700 text-xs sm:text-sm">$${item.priceWithTax.toFixed(2)}</td>
             <td class="py-2.5 text-right font-bold ${isPromoLine ? 'text-amber-700' : 'text-slate-800'} text-xs sm:text-sm">$${itemTotal.toFixed(2)}</td>
             <td class="py-2.5 text-right">
               <button onclick="removeCartItem(${idx})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -1409,14 +1460,14 @@
         `;
       }).join('');
 
-      document.getElementById('cart-subtotal').innerText = `$${totals.subtotal.toFixed(2)}`;
-      if (totals.totalDiscount > 0) {
+      document.getElementById('cart-subtotal').innerText = `$${totals.taxableBase.toFixed(2)}`;
+      if (totals.totalDiscountWithTax > 0) {
         document.getElementById('cart-discount-row').classList.remove('hidden');
-        document.getElementById('cart-discount').innerText = `-$${totals.totalDiscount.toFixed(2)}`;
+        document.getElementById('cart-discount').innerText = `-$${totals.totalDiscountWithTax.toFixed(2)}`;
       } else {
         document.getElementById('cart-discount-row').classList.add('hidden');
       }
-      document.getElementById('cart-tax-label').innerText = `IVA (${db.settings.taxRate}%):`;
+      document.getElementById('cart-tax-label').innerText = `Monto IVA (${db.settings.taxRate}%):`;
       document.getElementById('cart-tax').innerText = `$${totals.taxAmount.toFixed(2)}`;
       document.getElementById('cart-total').innerText = `$${totals.finalTotal.toFixed(2)}`;
       lucide.createIcons();
@@ -1424,6 +1475,7 @@
 
     function renderTouchGrid() {
       const grid = document.getElementById('touch-grid');
+      const mult = getTaxRateMultiplier();
       let html = '';
 
       (db.combos || []).forEach(c => {
@@ -1444,6 +1496,7 @@
       });
 
       db.products.forEach(p => {
+        const priceWithTax = p.price * mult;
         html += `
           <button onclick="addToCart('${p.id}')" class="p-2 sm:p-3 border border-slate-200 rounded-xl bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col justify-between h-32 sm:h-36 shadow-sm">
             <div>
@@ -1455,7 +1508,7 @@
             </div>
             <div class="flex justify-between items-end">
               <span class="text-[10px] text-slate-400">Stk: ${p.stock}</span>
-              <span class="font-extrabold text-slate-900 text-xs sm:text-sm">$${p.price.toFixed(2)}</span>
+              <span class="font-extrabold text-sky-700 text-xs sm:text-sm">$${priceWithTax.toFixed(2)}</span>
             </div>
           </button>
         `;
@@ -1840,7 +1893,7 @@
       container.innerHTML = comboFormItems.map((item, idx) => `
         <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
           <select onchange="comboFormItems[${idx}].productId = this.value" class="flex-1 px-2 py-1.5 rounded border border-slate-300 text-xs truncate">
-            ${db.products.map(p => `<option value="${p.id}" ${p.id === item.productId ? 'selected' : ''}>${p.name} ($${p.price.toFixed(2)})</option>`).join('')}
+            ${db.products.map(p => `<option value="${p.id}" ${p.id === item.productId ? 'selected' : ''}>${p.name} ($${(p.price * getTaxRateMultiplier()).toFixed(2)} c/IVA)</option>`).join('')}
           </select>
           <input type="number" min="1" value="${item.qty}" onchange="comboFormItems[${idx}].qty = parseInt(this.value) || 1" class="w-14 sm:w-16 px-2 py-1.5 rounded border border-slate-300 text-xs text-center">
           <button type="button" onclick="removeComboItemRow(${idx})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -2084,8 +2137,8 @@
         date: new Date().toISOString(),
         user: currentUser.username,
         items: [...currentCart],
-        subtotal: totals.subtotal,
-        discount: totals.totalDiscount,
+        subtotal: totals.taxableBase,
+        discount: totals.totalDiscountWithTax,
         taxableBase: totals.taxableBase,
         taxRate: db.settings.taxRate,
         taxAmount: totals.taxAmount,
@@ -2123,7 +2176,7 @@
       const itemsHtml = sale.items.map(i => `
         <div style="display:flex; justify-content:space-between; margin-bottom: 2px;">
           <span>${i.qty}x ${i.name.slice(0,18)}</span>
-          <span>$${(i.price * i.qty).toFixed(2)}</span>
+          <span>$${(i.priceWithTax * i.qty).toFixed(2)}</span>
         </div>
       `).join('');
 
@@ -2144,9 +2197,9 @@
         <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
         ${sale.discount > 0 ? `<div style="display:flex; justify-content:space-between;"><span>Descuento Promo:</span><span>-$${sale.discount.toFixed(2)}</span></div>` : ''}
         <div style="display:flex; justify-content:space-between;"><span>Importe sin IVA:</span><span>$${sale.taxableBase.toFixed(2)}</span></div>
-        <div style="display:flex; justify-content:space-between;"><span>IVA (${sale.taxRate}%):</span><span>$${sale.taxAmount.toFixed(2)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Monto IVA (${sale.taxRate}%):</span><span>$${sale.taxAmount.toFixed(2)}</span></div>
         <div style="display:flex; justify-content:space-between; font-weight:bold; font-size: 13px; margin-top: 4px;">
-          <span>TOTAL:</span>
+          <span>TOTAL FINAL:</span>
           <span>$${sale.total.toFixed(2)}</span>
         </div>
         <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
@@ -2174,25 +2227,49 @@
       const btnAdd = document.getElementById('btn-add-product');
       if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';
 
-      tbody.innerHTML = db.products.map(p => `
-        <tr>
-          <td class="p-3">
-            ${p.image ? `<img src="${p.image}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg border">` : '<div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs">📦</div>'}
-          </td>
-          <td class="p-3 font-mono text-xs font-bold">${p.code}</td>
-          <td class="p-3 font-medium text-slate-800">${p.name}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 font-medium">${p.category}</span></td>
-          <td class="p-3 text-right">$${p.cost.toFixed(2)}</td>
-          <td class="p-3 text-right font-bold text-slate-800">$${p.price.toFixed(2)}</td>
-          <td class="p-3 text-center font-bold">${p.stock}</td>
-          <td class="p-3 text-center flex justify-center gap-2">
-            ${canEdit ? `
-              <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
-              <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-            ` : '-'}
-          </td>
-        </tr>
-      `).join('');
+      const filterVal = (document.getElementById('catalog-search-input')?.value || '').toLowerCase().trim();
+      const mult = getTaxRateMultiplier();
+
+      const filteredProducts = db.products.filter(p => {
+        if (!filterVal) return true;
+        return (p.code || '').toLowerCase().includes(filterVal) || 
+               (p.barcode || '').toLowerCase().includes(filterVal) || 
+               (p.name || '').toLowerCase().includes(filterVal) || 
+               (p.category || '').toLowerCase().includes(filterVal);
+      });
+
+      if (filteredProducts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-400">No se encontraron productos que coincidan con la búsqueda.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredProducts.map(p => {
+        const priceWithoutTax = p.price;
+        const priceWithTax = priceWithoutTax * mult;
+        const taxAmount = priceWithTax - priceWithoutTax;
+
+        return `
+          <tr>
+            <td class="p-3">
+              ${p.image ? `<img src="${p.image}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg border">` : '<div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs">📦</div>'}
+            </td>
+            <td class="p-3 font-mono text-xs font-bold text-slate-700">${p.code} <span class="block text-[10px] text-slate-400 font-normal">${p.barcode}</span></td>
+            <td class="p-3 font-medium text-slate-800">${p.name}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 font-medium">${p.category}</span></td>
+            <td class="p-3 text-right text-slate-500">$${p.cost.toFixed(2)}</td>
+            <td class="p-3 text-right text-slate-600">$${priceWithoutTax.toFixed(2)}</td>
+            <td class="p-3 text-right text-slate-500">$${taxAmount.toFixed(2)}</td>
+            <td class="p-3 text-right font-extrabold text-sky-700">$${priceWithTax.toFixed(2)}</td>
+            <td class="p-3 text-center font-bold">${p.stock}</td>
+            <td class="p-3 text-center flex justify-center gap-2">
+              ${canEdit ? `
+                <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+              ` : '-'}
+            </td>
+          </tr>
+        `;
+      }).join('');
       lucide.createIcons();
     }
 
@@ -2218,6 +2295,9 @@
           document.getElementById('prod-stock').value = p.stock;
           document.getElementById('prod-cost').value = p.cost;
           document.getElementById('prod-price').value = p.price;
+          
+          const priceWithTax = p.price * getTaxRateMultiplier();
+          document.getElementById('prod-price-with-tax').value = priceWithTax.toFixed(2);
           document.getElementById('prod-image').value = p.image || '';
         }
       } else {
@@ -2228,22 +2308,39 @@
         document.getElementById('prod-stock').value = '10';
         document.getElementById('prod-cost').value = '';
         document.getElementById('prod-price').value = '';
+        document.getElementById('prod-price-with-tax').value = '';
         document.getElementById('prod-image').value = '';
       }
 
-      calculateModalMargin();
+      calculateModalMargin('price');
       document.getElementById('product-modal').classList.remove('hidden');
     }
 
     function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
     
-    function calculateModalMargin() {
+    function calculateModalMargin(changedField = 'price') {
+      const mult = getTaxRateMultiplier();
       const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
-      const price = parseFloat(document.getElementById('prod-price').value) || 0;
+      let priceWithoutTax = parseFloat(document.getElementById('prod-price').value) || 0;
+      let priceWithTax = parseFloat(document.getElementById('prod-price-with-tax').value) || 0;
+
+      if (changedField === 'priceWithTax') {
+        priceWithoutTax = priceWithTax / mult;
+        document.getElementById('prod-price').value = priceWithoutTax ? priceWithoutTax.toFixed(2) : '';
+      } else if (changedField === 'price') {
+        priceWithTax = priceWithoutTax * mult;
+        document.getElementById('prod-price-with-tax').value = priceWithTax ? priceWithTax.toFixed(2) : '';
+      }
+
+      const taxAmount = Math.max(0, priceWithTax - priceWithoutTax);
+      document.getElementById('prod-tax-amount-display').innerText = `$${taxAmount.toFixed(2)}`;
+
       const disp = document.getElementById('prod-margin-display');
-      if (cost > 0) {
-        disp.innerText = `+${(((price - cost) / cost) * 100).toFixed(1)}% ($${(price - cost).toFixed(2)})`;
-      } else { disp.innerText = '0%'; }
+      if (cost > 0 && priceWithoutTax > 0) {
+        disp.innerText = `+${(((priceWithoutTax - cost) / cost) * 100).toFixed(1)}% ($${(priceWithoutTax - cost).toFixed(2)})`;
+      } else { 
+        disp.innerText = '0%'; 
+      }
     }
 
     function saveProduct(e) {
@@ -2285,15 +2382,52 @@
 
     function renderQuickEdit() {
       const tbody = document.getElementById('quick-edit-table-body');
-      tbody.innerHTML = db.products.map(p => `
-        <tr>
-          <td class="p-3 font-medium text-slate-800">${p.name} (${p.code})</td>
-          <td class="p-3 text-center"><input type="number" id="qe-stock-${p.id}" value="${p.stock}" class="w-16 sm:w-20 text-center border rounded p-1 text-xs sm:text-sm"></td>
-          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-cost-${p.id}" value="${p.cost.toFixed(2)}" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
-          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-price-${p.id}" value="${p.price.toFixed(2)}" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
-          <td class="p-3 text-center"><button onclick="saveQuickEdit('${p.id}')" class="bg-sky-600 text-white text-xs px-2.5 py-1.5 rounded font-medium">Guardar</button></td>
-        </tr>
-      `).join('');
+      const mult = getTaxRateMultiplier();
+      const filterVal = (document.getElementById('quick-edit-search-input')?.value || '').toLowerCase().trim();
+
+      const filteredProducts = db.products.filter(p => {
+        if (!filterVal) return true;
+        return (p.code || '').toLowerCase().includes(filterVal) || 
+               (p.barcode || '').toLowerCase().includes(filterVal) || 
+               (p.name || '').toLowerCase().includes(filterVal) || 
+               (p.category || '').toLowerCase().includes(filterVal);
+      });
+
+      if (filteredProducts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No se encontraron productos que coincidan con la búsqueda.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredProducts.map(p => {
+        const priceWithTax = p.price * mult;
+        return `
+          <tr>
+            <td class="p-3 font-medium text-slate-800">${p.name} <span class="text-xs text-slate-400 font-mono">(${p.code})</span></td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 font-medium">${p.category}</span></td>
+            <td class="p-3 text-center"><input type="number" id="qe-stock-${p.id}" value="${p.stock}" class="w-16 sm:w-20 text-center border rounded p-1 text-xs sm:text-sm"></td>
+            <td class="p-3 text-right"><input type="number" step="0.01" id="qe-cost-${p.id}" value="${p.cost.toFixed(2)}" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
+            <td class="p-3 text-right"><input type="number" step="0.01" id="qe-price-${p.id}" value="${p.price.toFixed(2)}" oninput="syncQuickEditPrices('${p.id}', 'price')" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
+            <td class="p-3 text-right font-bold"><input type="number" step="0.01" id="qe-price-tax-${p.id}" value="${priceWithTax.toFixed(2)}" oninput="syncQuickEditPrices('${p.id}', 'priceTax')" class="w-20 sm:w-24 text-right border border-sky-400 bg-sky-50 rounded p-1 text-xs sm:text-sm font-bold text-sky-800"></td>
+            <td class="p-3 text-center"><button onclick="saveQuickEdit('${p.id}')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs px-2.5 py-1.5 rounded font-medium shadow-sm transition">Guardar</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function syncQuickEditPrices(id, source) {
+      const mult = getTaxRateMultiplier();
+      const priceInput = document.getElementById(`qe-price-${id}`);
+      const priceTaxInput = document.getElementById(`qe-price-tax-${id}`);
+
+      if (source === 'priceTax') {
+        const pTax = parseFloat(priceTaxInput.value) || 0;
+        const pNet = pTax / mult;
+        priceInput.value = pNet ? pNet.toFixed(2) : '';
+      } else {
+        const pNet = parseFloat(priceInput.value) || 0;
+        const pTax = pNet * mult;
+        priceTaxInput.value = pTax ? pTax.toFixed(2) : '';
+      }
     }
 
     function saveQuickEdit(id) {
@@ -2306,7 +2440,7 @@
       db.auditLogs.push({ date: new Date().toISOString(), user: currentUser.username, product: p.name, detail: `Modificación rápida. Stock ${p.stock}->${s}, Precio $${p.price}->${pr}` });
       p.stock = s; p.cost = c; p.price = pr;
       saveStorage();
-      alert('Guardado');
+      alert('Cambios guardados correctamente');
       renderQuickEdit();
     }
 
@@ -2347,9 +2481,9 @@
           <td class="p-3 text-slate-600 text-xs">${new Date(s.date).toLocaleString()}</td>
           <td class="p-3">${s.user}</td>
           <td class="p-3 uppercase text-xs font-semibold">${s.paymentMethod}</td>
-          <td class="p-3 text-right">$${s.subtotal.toFixed(2)}</td>
+          <td class="p-3 text-right">$${s.taxableBase.toFixed(2)}</td>
           <td class="p-3 text-right text-slate-500">$${s.taxAmount.toFixed(2)} <span class="text-[10px] bg-slate-100 px-1 rounded">(${s.taxRate}%)</span></td>
-          <td class="p-3 text-right font-bold">$${s.total.toFixed(2)}</td>
+          <td class="p-3 text-right font-bold text-sky-700">$${s.total.toFixed(2)}</td>
           <td class="p-3 text-center"><span class="px-2 py-0.5 text-[10px] rounded-full font-bold uppercase ${s.status === 'cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${s.status === 'cancelled' ? 'Cancelada' : 'Completada'}</span></td>
           <td class="p-3 text-center flex justify-center items-center gap-2">
             <button onclick="reprintTicket('${s.id}')" title="Reimprimir Ticket" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 text-xs font-medium p-1"><i data-lucide="printer" class="w-4 h-4"></i></button>
@@ -2431,8 +2565,8 @@
           <td class="p-3 text-slate-600 text-xs">${new Date(s.date).toLocaleString()}</td>
           <td class="p-3">${s.user}</td>
           <td class="p-3 uppercase text-xs font-semibold">${s.paymentMethod}</td>
-          <td class="p-3 text-right">$${(s.taxableBase || (s.total / (1 + (s.taxRate/100)))).toFixed(2)}</td>
-          <td class="p-3 text-right text-slate-500">$${(s.taxAmount || (s.total - (s.total / (1 + (s.taxRate/100))))).toFixed(2)}</td>
+          <td class="p-3 text-right">$${(s.taxableBase || (s.total / getTaxRateMultiplier())).toFixed(2)}</td>
+          <td class="p-3 text-right text-slate-500">$${(s.taxAmount || (s.total - (s.total / getTaxRateMultiplier()))).toFixed(2)}</td>
           <td class="p-3 text-right font-bold">$${s.total.toFixed(2)}</td>
         </tr>
       `).join('');
@@ -2443,6 +2577,7 @@
       const wrapper = document.getElementById('printable-ticket-wrapper');
       const container = document.getElementById('printable-ticket');
       const s = db.settings;
+      const mult = getTaxRateMultiplier();
 
       const startDate = document.getElementById('shift-start-date').value;
       const startTime = document.getElementById('shift-start-time').value;
@@ -2450,11 +2585,11 @@
       const endTime = document.getElementById('shift-end-time').value;
 
       const totalSales = activeSales.reduce((a, sale) => a + sale.total, 0);
-      const totalWithoutTax = activeSales.reduce((a, sale) => a + (sale.taxableBase || (sale.total / (1 + (sale.taxRate/100)))), 0);
-      const totalTax = activeSales.reduce((a, sale) => a + (sale.taxAmount || (sale.total - (sale.total / (1 + (sale.taxRate/100))))), 0);
+      const totalWithoutTax = activeSales.reduce((a, sale) => a + (sale.taxableBase || (sale.total / mult)), 0);
+      const totalTax = activeSales.reduce((a, sale) => a + (sale.taxAmount || (sale.total - (sale.total / mult))), 0);
 
       const notesHtml = activeSales.map(sale => {
-        const sub = sale.taxableBase || (sale.total / (1 + (sale.taxRate/100)));
+        const sub = sale.taxableBase || (sale.total / mult);
         const tax = sale.taxAmount || (sale.total - sub);
         return `
           <div style="margin-bottom: 4px; border-bottom: 1px dotted #ccc; padding-bottom: 2px;">
