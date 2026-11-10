@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MisVentas - Punto de Venta v5.0</title>
+  <title>MisVentas - Punto de Venta v1.0</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -83,12 +83,13 @@
           <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v5.0</span></h1>
+          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v1.0</span></h1>
           <p class="text-xs text-slate-400 mt-0.5">Punto de Venta con Firebase</p>
         </div>
       </div>
 
-      <nav id="main-nav-bar" class="hidden md:flex items-center gap-1 overflow-x-auto py-1"></nav>
+      <!-- NAVEGACIÓN ADAPTABLE (SIN SCROLL HORIZONTAL) -->
+      <nav id="main-nav-bar" class="hidden lg:flex items-center gap-1 flex-wrap justify-center py-1 max-w-3xl"></nav>
 
       <div class="flex items-center gap-3">
         <div class="text-right text-xs">
@@ -1057,17 +1058,17 @@
       const nav = document.getElementById('main-nav-bar');
       const p = currentUser.permissions || {};
       const menuConfig = [
-        { key: 'pos', id: 'pos', label: 'Punto de Venta', icon: 'calculator' },
+        { key: 'pos', id: 'pos', label: 'POS', icon: 'calculator' },
         { key: 'catalog', id: 'catalog', label: 'Catálogo', icon: 'boxes' },
-        { key: 'inventoryEntry', id: 'inventory-entry', label: 'Entradas Stock', icon: 'arrow-down-to-line' },
+        { key: 'inventoryEntry', id: 'inventory-entry', label: 'Entradas', icon: 'arrow-down-to-line' },
         { key: 'expenses', id: 'expenses', label: 'Gastos', icon: 'minus-circle' },
         { key: 'finances', id: 'finances', label: 'Ganancias', icon: 'trending-up' },
         { key: 'categories', id: 'categories', label: 'Categorías', icon: 'tag' },
-        { key: 'quickEdit', id: 'quick-edit', label: 'Edición Rápida', icon: 'zap' },
-        { key: 'combos', id: 'combos', label: 'Promociones', icon: 'package' },
+        { key: 'quickEdit', id: 'quick-edit', label: 'Edición', icon: 'zap' },
+        { key: 'combos', id: 'combos', label: 'Promos', icon: 'package' },
         { key: 'salesHistory', id: 'sales-history', label: 'Ventas', icon: 'history' },
-        { key: 'shiftCut', id: 'shift-cut', label: 'Corte Caja', icon: 'receipt' },
-        { key: 'ticketSettings', id: 'ticket-settings', label: 'Datos Ticket', icon: 'file-badge' },
+        { key: 'shiftCut', id: 'shift-cut', label: 'Corte', icon: 'receipt' },
+        { key: 'ticketSettings', id: 'ticket-settings', label: 'Ticket', icon: 'file-badge' },
         { key: 'users', id: 'users', label: 'Usuarios', icon: 'users' },
         { key: 'auditLog', id: 'audit-log', label: 'Bitácora', icon: 'file-text' }
       ];
@@ -1075,8 +1076,8 @@
       nav.innerHTML = menuConfig
         .filter(m => currentUser.role === 'admin' || p[m.key])
         .map(m => `
-          <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 hover:bg-slate-800 transition whitespace-nowrap">
-            <i data-lucide="${m.icon}" class="w-4 h-4"></i> ${m.label}
+          <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1 hover:bg-slate-800 transition">
+            <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i> ${m.label}
           </button>
         `).join('');
       lucide.createIcons();
