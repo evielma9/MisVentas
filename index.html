@@ -42,12 +42,12 @@
 
   <!-- MODAL DE AUTENTICACIÓN -->
   <div id="login-modal" class="fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-slate-100">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="text-center mb-6">
-        <div class="bg-sky-500 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-sky-500/30">
-          <i data-lucide="shopping-cart" class="w-8 h-8"></i>
+        <div class="bg-sky-500 text-white w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-sky-500/30">
+          <i data-lucide="shopping-cart" class="w-7 h-7 sm:w-8 sm:h-8"></i>
         </div>
-        <h1 class="text-2xl font-bold text-slate-800">MisVentas POS</h1>
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-800">MisVentas POS</h1>
         <p class="text-xs text-slate-500 mt-1">Ingresa tus credenciales para acceder al sistema</p>
       </div>
 
@@ -75,51 +75,61 @@
     </div>
   </div>
 
-  <!-- CABECERA -->
+  <!-- CABECERA RESPONSIVA -->
   <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40 no-print">
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
       <div class="flex items-center gap-3">
-        <div class="bg-sky-500 text-white p-2 rounded-xl">
-          <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+        <!-- BOTÓN HAMBURGUESA PARA MÓVILES -->
+        <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <div class="bg-sky-500 text-white p-2 rounded-xl flex items-center justify-center">
+          <i data-lucide="shopping-bag" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">MisVentas <span class="text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v1.0</span></h1>
-          <p class="text-xs text-slate-400 mt-0.5">Punto de Venta con Firebase</p>
+          <h1 class="font-bold text-base sm:text-lg leading-none flex items-center">MisVentas <span class="text-[10px] sm:text-xs bg-sky-500/30 text-sky-300 px-1.5 py-0.5 rounded font-mono ml-1">v1.0</span></h1>
+          <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 hidden sm:block">Punto de Venta con Firebase</p>
         </div>
       </div>
 
-      <!-- NAVEGACIÓN ADAPTABLE (SIN SCROLL HORIZONTAL) -->
+      <!-- NAVEGACIÓN ESCRITORIO -->
       <nav id="main-nav-bar" class="hidden lg:flex items-center gap-1 flex-wrap justify-center py-1 max-w-3xl"></nav>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
         <div class="text-right text-xs">
-          <span id="current-user-name" class="font-semibold block text-slate-200">Invitado</span>
-          <span id="current-user-role" class="text-sky-400 font-mono text-[10px] uppercase">Sin Rol</span>
+          <span id="current-user-name" class="font-semibold block text-slate-200 max-w-[100px] sm:max-w-none truncate">Invitado</span>
+          <span id="current-user-role" class="text-sky-400 font-mono text-[10px] uppercase block">Sin Rol</span>
         </div>
         <button onclick="logout()" title="Cerrar Sesión" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition">
           <i data-lucide="log-out" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
+
+    <!-- MENÚ DESPLEGABLE MÓVIL / TABLETA -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-slate-800 border-t border-slate-700 px-4 py-3 max-h-[70vh] overflow-y-auto">
+      <nav id="mobile-nav-bar" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></nav>
+    </div>
   </header>
 
   <!-- NAVEGACIÓN Y CONTENIDO -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 no-print">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 no-print">
 
     <!-- PESTAÑA: PUNTO DE VENTA (POS) -->
     <section id="tab-pos" class="tab-content active">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         
         <!-- Panel Izquierdo -->
         <div class="lg:col-span-7 flex flex-col gap-4">
-          <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+          <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Modo de Operación:</span>
-            <div class="inline-flex p-1 bg-slate-100 rounded-lg border border-slate-200">
-              <button onclick="setPosMode('scanner')" id="btn-mode-scanner" class="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition">
-                <i data-lucide="barcode" class="w-4 h-4"></i> Escáner / Código
+            <div class="inline-flex w-full sm:w-auto p-1 bg-slate-100 rounded-lg border border-slate-200">
+              <button onclick="setPosMode('scanner')" id="btn-mode-scanner" class="flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="barcode" class="w-4 h-4"></i> Escáner
               </button>
-              <button onclick="setPosMode('touch')" id="btn-mode-touch" class="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition">
-                <i data-lucide="touchpad" class="w-4 h-4"></i> Pantalla Táctil
+              <button onclick="setPosMode('touch')" id="btn-mode-touch" class="flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="touchpad" class="w-4 h-4"></i> Táctil
               </button>
             </div>
           </div>
@@ -127,20 +137,20 @@
           <div id="pos-mode-scanner-view" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
             <label class="block text-xs font-semibold text-slate-600 uppercase">Escanear o Buscar Artículo / Combo</label>
             <div class="relative">
-              <input type="text" id="pos-barcode-input" placeholder="Ingresa código, barras, nombre o paquete..." autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-base">
+              <input type="text" id="pos-barcode-input" placeholder="Ingresa código, barras, nombre o paquete..." autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm sm:text-base">
               <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-3 top-3.5"></i>
             </div>
             <div id="pos-suggestions" class="hidden border border-slate-200 rounded-xl bg-white max-h-48 overflow-y-auto divide-y divide-slate-100 shadow-lg"></div>
           </div>
 
-          <div id="pos-mode-touch-view" class="hidden bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-            <div id="touch-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[420px] overflow-y-auto p-1"></div>
+          <div id="pos-mode-touch-view" class="hidden bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
+            <div id="touch-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 gap-2 sm:gap-3 max-h-[420px] overflow-y-auto p-1"></div>
           </div>
 
           <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 text-white shadow-md space-y-2">
             <div class="flex items-center gap-2">
-              <i data-lucide="package" class="w-5 h-5"></i>
-              <h3 class="font-bold text-xs uppercase tracking-wide">Paquetes y Promociones (Haz clic para agregar al carrito)</h3>
+              <i data-lucide="package" class="w-5 h-5 shrink-0"></i>
+              <h3 class="font-bold text-xs uppercase tracking-wide">Paquetes y Promociones (Toca para agregar)</h3>
             </div>
             <div id="pos-active-combos" class="flex flex-wrap gap-2"></div>
           </div>
@@ -149,15 +159,15 @@
         <!-- Panel Derecho: Carrito Actual -->
         <div class="lg:col-span-5 flex flex-col">
           <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-full overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-              <h2 class="font-bold text-slate-800 flex items-center gap-2">
+            <div class="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+              <h2 class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
                 <i data-lucide="shopping-cart" class="w-5 h-5 text-sky-600"></i> Carrito Actual
               </h2>
               <button onclick="clearCart()" class="text-xs text-rose-600 hover:text-rose-800 font-medium hover:underline">Vaciar</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 min-h-[220px]">
-              <table class="w-full text-sm">
+            <div class="flex-1 overflow-x-auto overflow-y-auto p-2 sm:p-4 min-h-[220px] max-h-[350px] lg:max-h-none">
+              <table class="w-full text-xs sm:text-sm min-w-[280px]">
                 <thead>
                   <tr class="text-left text-xs text-slate-400 border-b border-slate-100">
                     <th class="pb-2">Producto / Paquete</th>
@@ -175,25 +185,25 @@
               </div>
             </div>
 
-            <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-2">
-              <div class="flex justify-between items-center text-sm">
+            <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 space-y-2">
+              <div class="flex justify-between items-center text-xs sm:text-sm">
                 <span class="text-slate-500">Subtotal:</span>
                 <span id="cart-subtotal" class="font-medium">$0.00</span>
               </div>
-              <div id="cart-discount-row" class="hidden flex justify-between items-center text-sm text-amber-600 font-bold bg-amber-50 p-2 rounded-lg border border-amber-200">
-                <span class="flex items-center gap-1"><i data-lucide="tag" class="w-4 h-4"></i> Descuento Promocional:</span>
+              <div id="cart-discount-row" class="hidden flex justify-between items-center text-xs sm:text-sm text-amber-600 font-bold bg-amber-50 p-2 rounded-lg border border-amber-200">
+                <span class="flex items-center gap-1"><i data-lucide="tag" class="w-4 h-4"></i> Descuento:</span>
                 <span id="cart-discount">-$0.00</span>
               </div>
-              <div class="flex justify-between items-center text-sm text-slate-600">
+              <div class="flex justify-between items-center text-xs sm:text-sm text-slate-600">
                 <span id="cart-tax-label">IVA (16%):</span>
                 <span id="cart-tax" class="font-medium">$0.00</span>
               </div>
-              <div class="flex justify-between items-center text-2xl font-bold text-slate-900 border-t border-slate-200 pt-2">
+              <div class="flex justify-between items-center text-xl sm:text-2xl font-bold text-slate-900 border-t border-slate-200 pt-2">
                 <span>Total:</span>
                 <span id="cart-total" class="text-sky-600">$0.00</span>
               </div>
 
-              <button onclick="openCheckoutModal()" id="btn-checkout" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 text-base mt-2">
+              <button onclick="openCheckoutModal()" id="btn-checkout" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 sm:py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 text-sm sm:text-base mt-2">
                 <i data-lucide="credit-card" class="w-5 h-5"></i> Cobrar y Procesar
               </button>
             </div>
@@ -205,41 +215,43 @@
 
     <!-- PESTAÑA: CATÁLOGO DE PRODUCTOS -->
     <section id="tab-catalog" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Catálogo de Productos</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Catálogo de Productos</h2>
             <p class="text-xs text-slate-500">Administra los artículos e incluye sus imágenes correspondientes</p>
           </div>
-          <button id="btn-add-product" onclick="openProductModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <button id="btn-add-product" onclick="openProductModal()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
             <i data-lucide="plus-circle" class="w-4 h-4"></i> Nuevo Artículo
           </button>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Foto</th>
-                <th class="p-3">Código</th>
-                <th class="p-3">Nombre</th>
-                <th class="p-3">Categoría</th>
-                <th class="p-3 text-right">Costo</th>
-                <th class="p-3 text-right">Precio</th>
-                <th class="p-3 text-center">Stock</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="catalog-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Foto</th>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Nombre</th>
+                  <th class="p-3">Categoría</th>
+                  <th class="p-3 text-right">Costo</th>
+                  <th class="p-3 text-right">Precio</th>
+                  <th class="p-3 text-center">Stock</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="catalog-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PESTAÑA: ENTRADAS DE INVENTARIO -->
     <section id="tab-inventory-entry" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-2xl mx-auto space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 max-w-2xl mx-auto space-y-6">
         <div>
-          <h2 class="text-xl font-bold text-slate-800">Recepción / Entrada de Inventario</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800">Recepción / Entrada de Inventario</h2>
           <p class="text-xs text-slate-500">Agrega existencias a productos ya registrados en el catálogo</p>
         </div>
         <form onsubmit="saveInventoryEntry(event)" class="space-y-4">
@@ -248,7 +260,7 @@
             <select id="inv-product-id" required class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm">
             </select>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Cantidad a Agregar</label>
               <input type="number" id="inv-add-qty" required min="1" placeholder="Ej. 50" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
@@ -262,7 +274,7 @@
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Notas / Motivo de Entrada</label>
             <input type="text" id="inv-notes" placeholder="Ej. Compra a proveedor Factura #402" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
           </div>
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm sm:text-base">
             <i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Registrar Entrada de Stock
           </button>
         </form>
@@ -271,44 +283,46 @@
 
     <!-- PESTAÑA: REGISTRO DE GASTOS -->
     <section id="tab-expenses" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Registro de Gastos</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Registro de Gastos</h2>
             <p class="text-xs text-slate-500">Captura de egresos de la empresa y gastos operativos</p>
           </div>
-          <button onclick="openExpenseModal()" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <button onclick="openExpenseModal()" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
             <i data-lucide="minus-circle" class="w-4 h-4"></i> Registrar Nuevo Gasto
           </button>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Fecha y Hora</th>
-                <th class="p-3">Concepto</th>
-                <th class="p-3">Forma de Pago</th>
-                <th class="p-3">Usuario</th>
-                <th class="p-3 text-right">Importe ($)</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="expenses-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Fecha y Hora</th>
+                  <th class="p-3">Concepto</th>
+                  <th class="p-3">Forma de Pago</th>
+                  <th class="p-3">Usuario</th>
+                  <th class="p-3 text-right">Importe ($)</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="expenses-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PESTAÑA: GANANCIAS Y FINANZAS -->
     <section id="tab-finances" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center flex-wrap gap-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Balance de Ganancias y Gastos</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Balance de Ganancias y Gastos</h2>
             <p class="text-xs text-slate-500">Calcula la utilidad neta contrastando ventas reales y gastos en un período</p>
           </div>
-          <button onclick="printFinancialReport()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte Financiero
+          <button onclick="printFinancialReport()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte
           </button>
         </div>
 
@@ -333,31 +347,31 @@
         </div>
 
         <!-- TARJETAS DE RESULTADOS FINANCIEROS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
             <span class="text-xs text-emerald-700 uppercase font-semibold">Total Ventas (Sin IVA)</span>
-            <p id="fin-total-sales" class="text-2xl font-bold text-emerald-800 mt-1">$0.00</p>
+            <p id="fin-total-sales" class="text-xl sm:text-2xl font-bold text-emerald-800 mt-1">$0.00</p>
           </div>
           <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
             <span class="text-xs text-amber-700 uppercase font-semibold">Costo de lo Vendido</span>
-            <p id="fin-total-cost" class="text-2xl font-bold text-amber-800 mt-1">$0.00</p>
+            <p id="fin-total-cost" class="text-xl sm:text-2xl font-bold text-amber-800 mt-1">$0.00</p>
           </div>
           <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
             <span class="text-xs text-rose-700 uppercase font-semibold">Total Gastos Operativos</span>
-            <p id="fin-total-expenses" class="text-2xl font-bold text-rose-800 mt-1">$0.00</p>
+            <p id="fin-total-expenses" class="text-xl sm:text-2xl font-bold text-rose-800 mt-1">$0.00</p>
           </div>
           <div class="bg-sky-50 p-4 rounded-xl border border-sky-100">
             <span class="text-xs text-sky-700 uppercase font-semibold">Ganancia Neta</span>
-            <p id="fin-net-profit" class="text-2xl font-bold text-sky-800 mt-1">$0.00</p>
+            <p id="fin-net-profit" class="text-xl sm:text-2xl font-bold text-sky-800 mt-1">$0.00</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2 sm:pt-4">
           <!-- DETALLE DE VENTAS -->
           <div class="border border-slate-200 rounded-xl overflow-hidden">
             <div class="bg-slate-50 p-3 border-b border-slate-200 font-bold text-xs uppercase text-slate-700">Ventas del Período</div>
-            <div class="max-h-64 overflow-y-auto">
-              <table class="w-full text-left text-xs">
+            <div class="max-h-64 overflow-y-auto overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[300px]">
                 <thead class="bg-slate-100 text-slate-500 uppercase">
                   <tr>
                     <th class="p-2">Folio</th>
@@ -373,8 +387,8 @@
           <!-- DETALLE DE GASTOS -->
           <div class="border border-slate-200 rounded-xl overflow-hidden">
             <div class="bg-slate-50 p-3 border-b border-slate-200 font-bold text-xs uppercase text-slate-700">Gastos del Período</div>
-            <div class="max-h-64 overflow-y-auto">
-              <table class="w-full text-left text-xs">
+            <div class="max-h-64 overflow-y-auto overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[300px]">
                 <thead class="bg-slate-100 text-slate-500 uppercase">
                   <tr>
                     <th class="p-2">Fecha</th>
@@ -394,13 +408,13 @@
 
     <!-- PESTAÑA: CATEGORÍAS -->
     <section id="tab-categories" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-2xl mx-auto space-y-6">
-        <div class="flex justify-between items-center">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 max-w-2xl mx-auto space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Catálogo de Categorías</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Catálogo de Categorías</h2>
             <p class="text-xs text-slate-500">Agrega, edita o elimina las categorías de tus productos</p>
           </div>
-          <button onclick="openCategoryModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2">
+          <button onclick="openCategoryModal()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-2">
             <i data-lucide="plus" class="w-4 h-4"></i> Nueva Categoría
           </button>
         </div>
@@ -420,34 +434,36 @@
 
     <!-- PESTAÑA: EDICIÓN RÁPIDA -->
     <section id="tab-quick-edit" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-        <h2 class="text-xl font-bold text-slate-800">Edición Rápida de Inventario y Precios</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Artículo</th>
-                <th class="p-3 text-center">Stock Actual</th>
-                <th class="p-3 text-right">Costo ($)</th>
-                <th class="p-3 text-right">Precio ($)</th>
-                <th class="p-3 text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="quick-edit-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-800">Edición Rápida de Inventario y Precios</h2>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Artículo</th>
+                  <th class="p-3 text-center">Stock Actual</th>
+                  <th class="p-3 text-right">Costo ($)</th>
+                  <th class="p-3 text-right">Precio ($)</th>
+                  <th class="p-3 text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="quick-edit-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PESTAÑA: PROMOCIONES -->
     <section id="tab-combos" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Paquetes y Promociones Especiales</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Paquetes y Promociones Especiales</h2>
             <p class="text-xs text-slate-500">Crea combos con imagen para venta rápida en pantalla táctil</p>
           </div>
-          <button onclick="openComboModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <button onclick="openComboModal()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
             <i data-lucide="plus-circle" class="w-4 h-4"></i> Crear Paquete Multi-Artículo
           </button>
         </div>
@@ -457,53 +473,55 @@
 
     <!-- PESTAÑA: VENTAS -->
     <section id="tab-sales-history" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-        <div class="flex justify-between items-center flex-wrap gap-4">
-          <h2 class="text-xl font-bold text-slate-800">Historial de Ventas</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center flex-wrap gap-4">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800">Historial de Ventas</h2>
           <!-- FILTROS DE FECHA INICIO Y FIN -->
-          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-            <div class="flex items-center gap-1.5">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs w-full sm:w-auto">
+            <div class="flex items-center gap-1.5 flex-1 sm:flex-initial">
               <span class="font-semibold uppercase text-slate-500">Desde:</span>
-              <input type="date" id="sales-start-date" onchange="renderSalesHistory()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs">
+              <input type="date" id="sales-start-date" onchange="renderSalesHistory()" class="w-full sm:w-auto px-2 py-1 rounded-lg border border-slate-300 text-xs">
             </div>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 flex-1 sm:flex-initial">
               <span class="font-semibold uppercase text-slate-500">Hasta:</span>
-              <input type="date" id="sales-end-date" onchange="renderSalesHistory()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs">
+              <input type="date" id="sales-end-date" onchange="renderSalesHistory()" class="w-full sm:w-auto px-2 py-1 rounded-lg border border-slate-300 text-xs">
             </div>
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Folio</th>
-                <th class="p-3">Fecha y Hora</th>
-                <th class="p-3">Cajero</th>
-                <th class="p-3">Pago</th>
-                <th class="p-3 text-right">Subtotal</th>
-                <th class="p-3 text-right">IVA</th>
-                <th class="p-3 text-right">Total</th>
-                <th class="p-3 text-center">Estado</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="sales-history-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Folio</th>
+                  <th class="p-3">Fecha y Hora</th>
+                  <th class="p-3">Cajero</th>
+                  <th class="p-3">Pago</th>
+                  <th class="p-3 text-right">Subtotal</th>
+                  <th class="p-3 text-right">IVA</th>
+                  <th class="p-3 text-right">Total</th>
+                  <th class="p-3 text-center">Estado</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="sales-history-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PESTAÑA: CORTE DE CAJA -->
     <section id="tab-shift-cut" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="flex justify-between items-center flex-wrap gap-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Corte de Caja (Arqueo de Turno)</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Corte de Caja (Arqueo de Turno)</h2>
             <p class="text-xs text-slate-500">Selecciona el rango de fechas y horas para calcular el corte y notas</p>
           </div>
-          <button onclick="printShiftCutReport()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte de Corte
+          <button onclick="printShiftCutReport()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-2">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte
           </button>
         </div>
 
@@ -526,29 +544,29 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <span class="text-xs text-slate-500 uppercase font-semibold">Total Ventas en Rango</span>
-            <p id="shift-total-sales" class="text-2xl font-bold text-slate-800 mt-1">$0.00</p>
+            <p id="shift-total-sales" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">$0.00</p>
           </div>
           <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
             <span class="text-xs text-emerald-600 uppercase font-semibold">Efectivo</span>
-            <p id="shift-cash-sales" class="text-2xl font-bold text-emerald-700 mt-1">$0.00</p>
+            <p id="shift-cash-sales" class="text-xl sm:text-2xl font-bold text-emerald-700 mt-1">$0.00</p>
           </div>
           <div class="bg-sky-50 p-4 rounded-xl border border-sky-100">
             <span class="text-xs text-sky-600 uppercase font-semibold">Tarjeta</span>
-            <p id="shift-card-sales" class="text-2xl font-bold text-sky-700 mt-1">$0.00</p>
+            <p id="shift-card-sales" class="text-xl sm:text-2xl font-bold text-sky-700 mt-1">$0.00</p>
           </div>
           <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
             <span class="text-xs text-amber-600 uppercase font-semibold">Crédito</span>
-            <p id="shift-credit-sales" class="text-2xl font-bold text-amber-700 mt-1">$0.00</p>
+            <p id="shift-credit-sales" class="text-xl sm:text-2xl font-bold text-amber-700 mt-1">$0.00</p>
           </div>
         </div>
 
         <div class="space-y-3 pt-2">
           <h3 class="font-bold text-slate-800 text-sm uppercase">Notas / Folios incluidos en el Corte</h3>
           <div class="overflow-x-auto border border-slate-200 rounded-xl">
-            <table class="w-full text-left text-sm">
+            <table class="w-full text-left text-xs sm:text-sm min-w-[500px]">
               <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
                 <tr>
                   <th class="p-3">Folio Nota</th>
@@ -570,9 +588,9 @@
 
     <!-- PESTAÑA: DATOS DEL TICKET Y EMPRESA -->
     <section id="tab-ticket-settings" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-2xl mx-auto space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 max-w-2xl mx-auto space-y-6">
         <div>
-          <h2 class="text-xl font-bold text-slate-800">Configuración de Empresa y Ticket</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800">Configuración de Empresa y Ticket</h2>
           <p class="text-xs text-slate-500">Modifica los datos fiscales y comerciales impresos en los tickets de venta</p>
         </div>
         <form onsubmit="saveTicketSettings(event)" class="space-y-4">
@@ -611,49 +629,53 @@
 
     <!-- PESTAÑA: USUARIOS -->
     <section id="tab-users" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-        <div class="flex justify-between items-center">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Catálogo de Usuarios y Permisos</h2>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Catálogo de Usuarios y Permisos</h2>
             <p class="text-xs text-slate-500">Configura contraseñas y accesos específicos por usuario</p>
           </div>
-          <button onclick="openUserModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <button onclick="openUserModal()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg flex items-center justify-center gap-2">
             <i data-lucide="user-plus" class="w-4 h-4"></i> Crear Usuario
           </button>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Usuario</th>
-                <th class="p-3">Nombre</th>
-                <th class="p-3">Rol</th>
-                <th class="p-3">Permisos de Acceso</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Usuario</th>
+                  <th class="p-3">Nombre</th>
+                  <th class="p-3">Rol</th>
+                  <th class="p-3">Permisos de Acceso</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PESTAÑA: BITÁCORA -->
     <section id="tab-audit-log" class="tab-content">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-        <h2 class="text-xl font-bold text-slate-800">Bitácora de Sistema e Inventarios</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th class="p-3">Fecha y Hora</th>
-                <th class="p-3">Usuario</th>
-                <th class="p-3">Artículo / Evento</th>
-                <th class="p-3">Detalles</th>
-              </tr>
-            </thead>
-            <tbody id="audit-log-table-body" class="divide-y divide-slate-100"></tbody>
-          </table>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-800">Bitácora de Sistema e Inventarios</h2>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Fecha y Hora</th>
+                  <th class="p-3">Usuario</th>
+                  <th class="p-3">Artículo / Evento</th>
+                  <th class="p-3">Detalles</th>
+                </tr>
+              </thead>
+              <tbody id="audit-log-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -661,8 +683,8 @@
   </main>
 
   <!-- MODAL: GASTOS -->
-  <div id="expense-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 border border-slate-100">
+  <div id="expense-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 sm:p-6 space-y-4 border border-slate-100 my-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="font-bold text-lg text-slate-800">Registro de Gasto</h3>
         <button onclick="closeExpenseModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -680,9 +702,9 @@
         </div>
         <div>
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Concepto del Gasto</label>
-          <input type="text" id="exp-concept" required placeholder="Ej. Pago de luz, bolsas de plástico..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+          <input type="text" id="exp-concept" required placeholder="Ej. Pago de luz..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Importe ($)</label>
             <input type="number" step="0.01" id="exp-amount" required placeholder="0.00" min="0.01" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
@@ -703,14 +725,14 @@
 
   <!-- MODAL: PRODUCTO -->
   <div id="product-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 id="product-modal-title" class="font-bold text-lg text-slate-800">Alta de Producto</h3>
         <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="saveProduct(event)" class="space-y-4">
         <input type="hidden" id="prod-edit-id">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Código Interno</label>
             <input type="text" id="prod-code" required placeholder="Ej. PA03" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
@@ -724,7 +746,7 @@
           <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre</label>
           <input type="text" id="prod-name" required placeholder="Ej. Lapicero Gel Azul" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Categoría</label>
             <select id="prod-category" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"></select>
@@ -749,7 +771,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Margen</label>
-            <div id="prod-margin-display" class="px-3 py-2 bg-emerald-50 text-emerald-700 font-bold text-sm rounded-lg border border-emerald-200 text-center">0%</div>
+            <div id="prod-margin-display" class="px-2 sm:px-3 py-2 bg-emerald-50 text-emerald-700 font-bold text-xs sm:text-sm rounded-lg border border-emerald-200 text-center truncate">0%</div>
           </div>
         </div>
         <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 rounded-lg shadow">Guardar Producto</button>
@@ -759,7 +781,7 @@
 
   <!-- MODAL: CATEGORÍA -->
   <div id="category-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4 border border-slate-100">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 sm:p-6 space-y-4 border border-slate-100">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 id="category-modal-title" class="font-bold text-lg text-slate-800">Nueva Categoría</h3>
         <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -777,7 +799,7 @@
 
   <!-- MODAL: PAQUETES MULTI-ARTÍCULO -->
   <div id="combo-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 id="combo-modal-title" class="font-bold text-lg text-slate-800">Crear Paquete Multi-Artículo</h3>
         <button onclick="closeComboModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -814,14 +836,14 @@
 
   <!-- MODAL: USUARIO & PERMISOS -->
   <div id="user-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="font-bold text-lg text-slate-800">Mantenimiento de Usuario</h3>
         <button onclick="closeUserModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="saveUser(event)" class="space-y-4">
         <input type="hidden" id="user-edit-id">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre de Usuario</label>
             <input type="text" id="user-username" required placeholder="ej. maria" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
@@ -845,7 +867,7 @@
 
         <div class="border-t border-slate-200 pt-3">
           <label class="block text-xs font-bold uppercase text-slate-600 mb-2">Permisos de Acceso a Módulos</label>
-          <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-pos" checked> Punto de Venta (POS)</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-catalog"> Catálogo de Productos</label>
             <label class="flex items-center gap-2 p-2 bg-slate-50 rounded border"><input type="checkbox" id="perm-inventory-entry"> Entrada de Inventario</label>
@@ -870,25 +892,25 @@
 
   <!-- MODAL: CHECKOUT -->
   <div id="checkout-modal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 border border-slate-100">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 sm:p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="font-bold text-lg text-slate-800">Procesar Venta</h3>
         <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="text-center py-2 bg-slate-50 rounded-xl border border-slate-200">
         <span class="text-xs text-slate-500 uppercase font-semibold">Total Final (IVA Incluido)</span>
-        <p id="checkout-total-display" class="text-3xl font-extrabold text-sky-600">$0.00</p>
+        <p id="checkout-total-display" class="text-2xl sm:text-3xl font-extrabold text-sky-600">$0.00</p>
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Forma de Pago</label>
         <div class="grid grid-cols-3 gap-2">
-          <button onclick="setPaymentMethod('cash')" id="pay-btn-cash" class="pay-method-btn border-2 border-sky-500 bg-sky-50 text-sky-700 font-medium p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
+          <button onclick="setPaymentMethod('cash')" id="pay-btn-cash" class="pay-method-btn border-2 border-sky-500 bg-sky-50 text-sky-700 font-medium p-2 sm:p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
             <i data-lucide="banknote" class="w-5 h-5"></i> Efectivo
           </button>
-          <button onclick="setPaymentMethod('card')" id="pay-btn-card" class="pay-method-btn border border-slate-200 text-slate-600 font-medium p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
+          <button onclick="setPaymentMethod('card')" id="pay-btn-card" class="pay-method-btn border border-slate-200 text-slate-600 font-medium p-2 sm:p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
             <i data-lucide="credit-card" class="w-5 h-5"></i> Tarjeta
           </button>
-          <button onclick="setPaymentMethod('credit')" id="pay-btn-credit" class="pay-method-btn border border-slate-200 text-slate-600 font-medium p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
+          <button onclick="setPaymentMethod('credit')" id="pay-btn-credit" class="pay-method-btn border border-slate-200 text-slate-600 font-medium p-2 sm:p-2.5 rounded-xl text-xs flex flex-col items-center gap-1">
             <i data-lucide="user-check" class="w-5 h-5"></i> Crédito
           </button>
         </div>
@@ -896,18 +918,18 @@
       <div id="cash-payment-details" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Efectivo Recibido</label>
-          <input type="number" step="0.01" id="checkout-cash-received" oninput="calculateChange()" placeholder="Dejar en blanco para importe exacto" class="w-full px-4 py-2 rounded-lg border border-slate-300 text-lg font-bold">
+          <input type="number" step="0.01" id="checkout-cash-received" oninput="calculateChange()" placeholder="Dejar en blanco para importe exacto" class="w-full px-4 py-2 rounded-lg border border-slate-300 text-base sm:text-lg font-bold">
         </div>
         <div class="flex justify-between items-center bg-slate-100 p-3 rounded-lg text-sm">
           <span class="text-slate-600 font-medium">Cambio:</span>
-          <span id="checkout-change-display" class="text-lg font-bold text-emerald-600">$0.00</span>
+          <span id="checkout-change-display" class="text-base sm:text-lg font-bold text-emerald-600">$0.00</span>
         </div>
       </div>
       <div id="credit-payment-details" class="hidden space-y-2">
         <label class="block text-xs font-semibold text-slate-600 uppercase">Cliente a Crédito</label>
-        <input type="text" id="checkout-customer-name" placeholder="Nombre completo" class="w-full px-4 py-2 rounded-lg border border-slate-300">
+        <input type="text" id="checkout-customer-name" placeholder="Nombre completo" class="w-full px-4 py-2 rounded-lg border border-slate-300 text-sm">
       </div>
-      <button onclick="completeSale()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+      <button onclick="completeSale()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm sm:text-base">
         <i data-lucide="check-circle" class="w-5 h-5"></i> Imprimir Ticket y Finalizar
       </button>
     </div>
@@ -920,9 +942,6 @@
 
   <!-- LÓGICA GENERAL Y CONFIGURACIÓN DE FIREBASE -->
   <script>
-    // ==========================================
-    // CONFIGURACIÓN DE FIREBASE (PROYECTO: MisVentasMonkey)
-    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyAd8yLcU1EiIDP52if1JLJjyXXymmVibg",
       authDomain: "misventas-35657.firebaseapp.com",
@@ -1054,8 +1073,14 @@
       return map[key] || 'pos';
     }
 
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    }
+
     function renderDynamicNavbar() {
       const nav = document.getElementById('main-nav-bar');
+      const mobileNav = document.getElementById('mobile-nav-bar');
       const p = currentUser.permissions || {};
       const menuConfig = [
         { key: 'pos', id: 'pos', label: 'POS', icon: 'calculator' },
@@ -1073,13 +1098,20 @@
         { key: 'auditLog', id: 'audit-log', label: 'Bitácora', icon: 'file-text' }
       ];
 
-      nav.innerHTML = menuConfig
-        .filter(m => currentUser.role === 'admin' || p[m.key])
-        .map(m => `
-          <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1 hover:bg-slate-800 transition">
-            <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i> ${m.label}
-          </button>
-        `).join('');
+      const filteredMenu = menuConfig.filter(m => currentUser.role === 'admin' || p[m.key]);
+
+      nav.innerHTML = filteredMenu.map(m => `
+        <button onclick="switchTab('${m.id}')" id="tab-btn-${m.id}" class="nav-btn px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1 hover:bg-slate-800 transition">
+          <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i> ${m.label}
+        </button>
+      `).join('');
+
+      mobileNav.innerHTML = filteredMenu.map(m => `
+        <button onclick="switchTab('${m.id}'); toggleMobileMenu();" id="mobile-tab-btn-${m.id}" class="mobile-nav-btn w-full p-2 rounded-lg text-xs font-medium flex items-center gap-2 bg-slate-700/50 hover:bg-slate-700 text-slate-200 transition">
+          <i data-lucide="${m.icon}" class="w-4 h-4 text-sky-400"></i> ${m.label}
+        </button>
+      `).join('');
+
       lucide.createIcons();
     }
 
@@ -1092,11 +1124,15 @@
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-slate-800', 'text-sky-400'));
+      document.querySelectorAll('.mobile-nav-btn').forEach(el => el.classList.remove('bg-sky-600', 'text-white'));
       
       const target = document.getElementById(`tab-${tabId}`);
       const btn = document.getElementById(`tab-btn-${tabId}`);
+      const mobileBtn = document.getElementById(`mobile-tab-btn-${tabId}`);
+
       if (target) target.classList.add('active');
       if (btn) btn.classList.add('bg-slate-800', 'text-sky-400');
+      if (mobileBtn) mobileBtn.classList.add('bg-sky-600', 'text-white');
 
       if (tabId === 'pos') renderPOS();
       if (tabId === 'catalog') renderCatalog();
@@ -1354,20 +1390,20 @@
           <tr class="${isPromoLine ? 'bg-amber-50/70 border-l-4 border-l-amber-500' : ''}">
             <td class="py-2.5 font-medium ${isPromoLine ? 'text-amber-900 font-bold' : 'text-slate-800'}">
               <div class="flex items-center gap-2">
-                ${item.image ? `<img src="${item.image}" class="w-8 h-8 object-cover rounded border">` : ''}
+                ${item.image ? `<img src="${item.image}" class="w-7 h-7 sm:w-8 sm:h-8 object-cover rounded border">` : ''}
                 <div>
-                  ${isPromoLine ? '<span class="bg-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">PROMO</span>' : ''}
-                  <span>${item.name}</span>
+                  ${isPromoLine ? '<span class="bg-amber-500 text-white text-[9px] font-extrabold px-1 py-0.5 rounded uppercase tracking-wider shadow-sm">PROMO</span>' : ''}
+                  <span class="block text-xs sm:text-sm">${item.name}</span>
                 </div>
               </div>
             </td>
             <td class="py-2.5 text-center">
-              <input type="number" min="1" value="${item.qty}" onchange="updateCartQty(${idx}, this.value)" class="w-12 text-center border border-slate-200 rounded py-0.5 text-sm">
+              <input type="number" min="1" value="${item.qty}" onchange="updateCartQty(${idx}, this.value)" class="w-10 sm:w-12 text-center border border-slate-200 rounded py-0.5 text-xs sm:text-sm">
             </td>
-            <td class="py-2.5 text-right text-slate-600">$${item.price.toFixed(2)}</td>
-            <td class="py-2.5 text-right font-bold ${isPromoLine ? 'text-amber-700' : 'text-slate-800'}">$${itemTotal.toFixed(2)}</td>
+            <td class="py-2.5 text-right text-slate-600 text-xs sm:text-sm">$${item.price.toFixed(2)}</td>
+            <td class="py-2.5 text-right font-bold ${isPromoLine ? 'text-amber-700' : 'text-slate-800'} text-xs sm:text-sm">$${itemTotal.toFixed(2)}</td>
             <td class="py-2.5 text-right">
-              <button onclick="removeCartItem(${idx})" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+              <button onclick="removeCartItem(${idx})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
             </td>
           </tr>
         `;
@@ -1392,16 +1428,16 @@
 
       (db.combos || []).forEach(c => {
         html += `
-          <button onclick="addComboToCart('${c.id}')" class="p-3 border-2 border-amber-400 rounded-xl bg-amber-50 hover:bg-amber-100 text-left transition flex flex-col justify-between h-36 shadow-sm">
+          <button onclick="addComboToCart('${c.id}')" class="p-2 sm:p-3 border-2 border-amber-400 rounded-xl bg-amber-50 hover:bg-amber-100 text-left transition flex flex-col justify-between h-32 sm:h-36 shadow-sm">
             <div>
-              <div class="flex justify-between items-start">
-                <span class="text-[9px] font-bold text-white bg-amber-500 px-1.5 py-0.5 rounded">PROMO</span>
-                ${c.image ? `<img src="${c.image}" class="w-10 h-10 object-cover rounded-lg border shadow-sm">` : '<div class="w-10 h-10 bg-amber-200/50 rounded-lg flex items-center justify-center text-xs">🎁</div>'}
+              <div class="flex justify-between items-start gap-1">
+                <span class="text-[9px] font-bold text-white bg-amber-500 px-1 py-0.5 rounded">PROMO</span>
+                ${c.image ? `<img src="${c.image}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg border shadow-sm">` : '<div class="w-8 h-8 sm:w-10 sm:h-10 bg-amber-200/50 rounded-lg flex items-center justify-center text-xs">🎁</div>'}
               </div>
-              <h4 class="font-bold text-slate-900 text-xs mt-1 line-clamp-2">${c.name}</h4>
+              <h4 class="font-bold text-slate-900 text-[11px] sm:text-xs mt-1 line-clamp-2">${c.name}</h4>
             </div>
             <div class="text-right">
-              <span class="font-extrabold text-amber-700 text-sm">$${c.price.toFixed(2)}</span>
+              <span class="font-extrabold text-amber-700 text-xs sm:text-sm">$${c.price.toFixed(2)}</span>
             </div>
           </button>
         `;
@@ -1409,17 +1445,17 @@
 
       db.products.forEach(p => {
         html += `
-          <button onclick="addToCart('${p.id}')" class="p-3 border border-slate-200 rounded-xl bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col justify-between h-36 shadow-sm">
+          <button onclick="addToCart('${p.id}')" class="p-2 sm:p-3 border border-slate-200 rounded-xl bg-slate-50 hover:bg-sky-50 text-left transition flex flex-col justify-between h-32 sm:h-36 shadow-sm">
             <div>
-              <div class="flex justify-between items-start">
-                <span class="text-[9px] font-bold text-sky-600 bg-sky-100 px-1.5 py-0.5 rounded">${p.category}</span>
-                ${p.image ? `<img src="${p.image}" class="w-10 h-10 object-cover rounded-lg border shadow-sm">` : '<div class="w-10 h-10 bg-slate-200/50 rounded-lg flex items-center justify-center text-xs">📦</div>'}
+              <div class="flex justify-between items-start gap-1">
+                <span class="text-[8px] sm:text-[9px] font-bold text-sky-600 bg-sky-100 px-1 py-0.5 rounded truncate max-w-[60px]">${p.category}</span>
+                ${p.image ? `<img src="${p.image}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg border shadow-sm">` : '<div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200/50 rounded-lg flex items-center justify-center text-xs">📦</div>'}
               </div>
-              <h4 class="font-bold text-slate-800 text-xs mt-1 line-clamp-2">${p.name}</h4>
+              <h4 class="font-bold text-slate-800 text-[11px] sm:text-xs mt-1 line-clamp-2">${p.name}</h4>
             </div>
             <div class="flex justify-between items-end">
-              <span class="text-[11px] text-slate-400">Stock: ${p.stock}</span>
-              <span class="font-extrabold text-slate-900 text-sm">$${p.price.toFixed(2)}</span>
+              <span class="text-[10px] text-slate-400">Stk: ${p.stock}</span>
+              <span class="font-extrabold text-slate-900 text-xs sm:text-sm">$${p.price.toFixed(2)}</span>
             </div>
           </button>
         `;
@@ -1469,7 +1505,7 @@
 
     function renderExpenses() {
       const tbody = document.getElementById('expenses-table-body');
-      tbody.innerHTML = (db.expenses || []).slice().reverse().map((exp, idx) => `
+      tbody.innerHTML = (db.expenses || []).slice().reverse().map((exp) => `
         <tr>
           <td class="p-3 text-xs text-slate-600 font-mono">${new Date(exp.date).toLocaleString()}</td>
           <td class="p-3 font-medium text-slate-800">${exp.concept}</td>
@@ -1477,7 +1513,7 @@
           <td class="p-3 text-slate-600">${exp.user}</td>
           <td class="p-3 text-right font-bold text-rose-600">$${exp.amount.toFixed(2)}</td>
           <td class="p-3 text-center">
-            <button onclick="deleteExpense('${exp.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            <button onclick="deleteExpense('${exp.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </td>
         </tr>
       `).join('');
@@ -1596,9 +1632,9 @@
       const netDisp = document.getElementById('fin-net-profit');
       netDisp.innerText = `$${netProfit.toFixed(2)}`;
       if (netProfit < 0) {
-        netDisp.className = "text-2xl font-bold text-rose-600 mt-1";
+        netDisp.className = "text-xl sm:text-2xl font-bold text-rose-600 mt-1";
       } else {
-        netDisp.className = "text-2xl font-bold text-sky-800 mt-1";
+        netDisp.className = "text-xl sm:text-2xl font-bold text-sky-800 mt-1";
       }
 
       document.getElementById('fin-sales-list').innerHTML = filteredSales.map(s => {
@@ -1679,8 +1715,8 @@
         <tr>
           <td class="p-3 font-medium text-slate-800">${cat}</td>
           <td class="p-3 text-center flex justify-center gap-2">
-            <button onclick="openCategoryModal(${idx})" class="text-sky-600 hover:text-sky-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
-            <button onclick="deleteCategory(${idx})" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            <button onclick="openCategoryModal(${idx})" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
+            <button onclick="deleteCategory(${idx})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </td>
         </tr>
       `).join('');
@@ -1803,10 +1839,10 @@
       const container = document.getElementById('combo-items-container');
       container.innerHTML = comboFormItems.map((item, idx) => `
         <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
-          <select onchange="comboFormItems[${idx}].productId = this.value" class="flex-1 px-2 py-1.5 rounded border border-slate-300 text-xs">
+          <select onchange="comboFormItems[${idx}].productId = this.value" class="flex-1 px-2 py-1.5 rounded border border-slate-300 text-xs truncate">
             ${db.products.map(p => `<option value="${p.id}" ${p.id === item.productId ? 'selected' : ''}>${p.name} ($${p.price.toFixed(2)})</option>`).join('')}
           </select>
-          <input type="number" min="1" value="${item.qty}" onchange="comboFormItems[${idx}].qty = parseInt(this.value) || 1" class="w-16 px-2 py-1.5 rounded border border-slate-300 text-xs text-center">
+          <input type="number" min="1" value="${item.qty}" onchange="comboFormItems[${idx}].qty = parseInt(this.value) || 1" class="w-14 sm:w-16 px-2 py-1.5 rounded border border-slate-300 text-xs text-center">
           <button type="button" onclick="removeComboItemRow(${idx})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
         </div>
       `).join('');
@@ -1851,15 +1887,15 @@
       container.innerHTML = (db.combos || []).map(c => `
         <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex justify-between items-center shadow-sm">
           <div class="flex items-center gap-3">
-            ${c.image ? `<img src="${c.image}" class="w-12 h-12 object-cover rounded-xl border">` : '<div class="w-12 h-12 bg-amber-200/50 rounded-xl flex items-center justify-center">🎁</div>'}
+            ${c.image ? `<img src="${c.image}" class="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-xl border">` : '<div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-200/50 rounded-xl flex items-center justify-center text-sm sm:text-base">🎁</div>'}
             <div>
               <span class="text-[10px] bg-amber-500 text-white font-bold px-1.5 py-0.5 rounded">PROMO</span>
-              <h4 class="font-bold text-slate-800 mt-1">${c.name}</h4>
-              <p class="text-xs text-slate-500">${c.items.length} artículos incluidos</p>
+              <h4 class="font-bold text-slate-800 mt-1 text-xs sm:text-sm">${c.name}</h4>
+              <p class="text-[10px] sm:text-xs text-slate-500">${c.items.length} artículos incluidos</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-xl font-extrabold text-sky-600 mr-2">$${c.price.toFixed(2)}</span>
+            <span class="text-base sm:text-xl font-extrabold text-sky-600 mr-1 sm:mr-2">$${c.price.toFixed(2)}</span>
             <button onclick="openComboModal('${c.id}')" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
             <button onclick="deleteCombo('${c.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </div>
@@ -1879,8 +1915,8 @@
             <td class="p-3"><span class="px-2 py-0.5 rounded text-xs uppercase font-bold ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${u.role}</span></td>
             <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${u.role === 'admin' ? 'Acceso Total' : permsList}</td>
             <td class="p-3 text-center flex justify-center gap-2">
-              <button onclick="openUserModal('${u.id}')" class="text-sky-600 hover:text-sky-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
-              ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+              <button onclick="openUserModal('${u.id}')" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
+              ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
             </td>
           </tr>
         `;
@@ -2141,7 +2177,7 @@
       tbody.innerHTML = db.products.map(p => `
         <tr>
           <td class="p-3">
-            ${p.image ? `<img src="${p.image}" class="w-10 h-10 object-cover rounded-lg border">` : '<div class="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs">📦</div>'}
+            ${p.image ? `<img src="${p.image}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg border">` : '<div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 rounded-lg flex items-center justify-center text-xs">📦</div>'}
           </td>
           <td class="p-3 font-mono text-xs font-bold">${p.code}</td>
           <td class="p-3 font-medium text-slate-800">${p.name}</td>
@@ -2151,8 +2187,8 @@
           <td class="p-3 text-center font-bold">${p.stock}</td>
           <td class="p-3 text-center flex justify-center gap-2">
             ${canEdit ? `
-              <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800"><i data-lucide="edit" class="w-4 h-4"></i></button>
-              <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+              <button onclick="openProductModal('${p.id}')" class="text-sky-600 hover:text-sky-800 p-1"><i data-lucide="edit" class="w-4 h-4"></i></button>
+              <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
             ` : '-'}
           </td>
         </tr>
@@ -2252,10 +2288,10 @@
       tbody.innerHTML = db.products.map(p => `
         <tr>
           <td class="p-3 font-medium text-slate-800">${p.name} (${p.code})</td>
-          <td class="p-3 text-center"><input type="number" id="qe-stock-${p.id}" value="${p.stock}" class="w-20 text-center border rounded p-1 text-sm"></td>
-          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-cost-${p.id}" value="${p.cost.toFixed(2)}" class="w-24 text-right border rounded p-1 text-sm"></td>
-          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-price-${p.id}" value="${p.price.toFixed(2)}" class="w-24 text-right border rounded p-1 text-sm"></td>
-          <td class="p-3 text-center"><button onclick="saveQuickEdit('${p.id}')" class="bg-sky-600 text-white text-xs px-3 py-1.5 rounded">Guardar</button></td>
+          <td class="p-3 text-center"><input type="number" id="qe-stock-${p.id}" value="${p.stock}" class="w-16 sm:w-20 text-center border rounded p-1 text-xs sm:text-sm"></td>
+          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-cost-${p.id}" value="${p.cost.toFixed(2)}" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
+          <td class="p-3 text-right"><input type="number" step="0.01" id="qe-price-${p.id}" value="${p.price.toFixed(2)}" class="w-20 sm:w-24 text-right border rounded p-1 text-xs sm:text-sm"></td>
+          <td class="p-3 text-center"><button onclick="saveQuickEdit('${p.id}')" class="bg-sky-600 text-white text-xs px-2.5 py-1.5 rounded font-medium">Guardar</button></td>
         </tr>
       `).join('');
     }
@@ -2308,16 +2344,16 @@
       tbody.innerHTML = filteredSales.slice().reverse().map(s => `
         <tr class="${s.status === 'cancelled' ? 'bg-rose-50/50 opacity-60' : ''}">
           <td class="p-3 font-mono text-xs font-bold">${s.id}</td>
-          <td class="p-3 text-slate-600">${new Date(s.date).toLocaleString()}</td>
+          <td class="p-3 text-slate-600 text-xs">${new Date(s.date).toLocaleString()}</td>
           <td class="p-3">${s.user}</td>
           <td class="p-3 uppercase text-xs font-semibold">${s.paymentMethod}</td>
           <td class="p-3 text-right">$${s.subtotal.toFixed(2)}</td>
           <td class="p-3 text-right text-slate-500">$${s.taxAmount.toFixed(2)} <span class="text-[10px] bg-slate-100 px-1 rounded">(${s.taxRate}%)</span></td>
           <td class="p-3 text-right font-bold">$${s.total.toFixed(2)}</td>
           <td class="p-3 text-center"><span class="px-2 py-0.5 text-[10px] rounded-full font-bold uppercase ${s.status === 'cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">${s.status === 'cancelled' ? 'Cancelada' : 'Completada'}</span></td>
-          <td class="p-3 text-center flex justify-center items-center gap-3">
-            <button onclick="reprintTicket('${s.id}')" title="Reimprimir Ticket" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 text-xs font-medium"><i data-lucide="printer" class="w-4 h-4"></i> Reimprimir</button>
-            ${s.status !== 'cancelled' && canCancel ? `<button onclick="cancelSale('${s.id}')" class="text-rose-600 text-xs font-medium underline">Cancelar</button>` : ''}
+          <td class="p-3 text-center flex justify-center items-center gap-2">
+            <button onclick="reprintTicket('${s.id}')" title="Reimprimir Ticket" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 text-xs font-medium p-1"><i data-lucide="printer" class="w-4 h-4"></i></button>
+            ${s.status !== 'cancelled' && canCancel ? `<button onclick="cancelSale('${s.id}')" class="text-rose-600 text-xs font-medium underline p-1">Cancelar</button>` : ''}
           </td>
         </tr>
       `).join('');
